@@ -1,0 +1,54 @@
+{% extends 'user/user_info.html' %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{% url 'user:users' %}">用户</a></li>
+        <li><a href="{% url 'user:user_detail' target_user.id %}">{{ target_user.chinese_name }}</a></li>
+        <li><a href="{% url 'user:user_organization' target_user.id %}">组织</a></li>
+    </ol>
+{% endblock %}
+
+{% block tab_content %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">组织</h1></div>
+        <div class="panel-body table-responsive">
+            {% if is_system_admin %}
+                <p>超级管理员对所有组织拥有所有权限</p>
+            {% else %}
+                <table data-classes="table table-hover"
+                       data-toggle="table"
+                       data-pagination="true"
+                       data-locale="zh-CN"
+                       data-search="true"
+                       data-search-align="left">
+                    <thead>
+                    <tr>
+                        <th>组名</th>
+                        <th>描述</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for org in target_user.organizations %}
+                        <tr>
+                            <td><a href="{% url 'organization:organization_detail' org.id %}">{{ org.name }}</a></td>
+                            <td>{{ org.description }}</td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block foot_js %}
+    <script>
+        $(function () {
+            $("#user_organization").addClass("active");
+        });
+    </script>
+    {{ block.super }}
+{% endblock %}
+

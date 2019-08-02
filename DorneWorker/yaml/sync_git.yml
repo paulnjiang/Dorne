@@ -1,0 +1,5 @@
+- hosts: 127.0.0.1
+  gather_facts: no
+  tasks:
+    - name: sync git
+      git: repo=https://{{ gituser | urlencode }}:{{ gitpassword | urlencode }}@{{ giturl }} dest={{ gitdir }} clone=yes update=yes version={{ gitbranch }}

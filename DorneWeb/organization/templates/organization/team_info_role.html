@@ -1,0 +1,132 @@
+{% extends 'organization/team_info.html' %}
+{% load static %}
+
+{% block tab_content %}
+    <div class="panel panel-default" id="team_role_div">
+        <div class="panel-heading"><h1 class="panel-title">团队角色</h1></div>
+        <div class="panel-body table-responsive">
+            {% if pm_add_system_role or pm_add_team_role %}
+                <div class="dorne-create-item">
+                    <a title="添加角色" href="{% url 'organization:team_info_role_add' team.id %}"
+                       class="btn btn-success"><i class="glyphicon glyphicon-plus"></i></a>
+                </div>
+            {% endif %}
+            <label id="target_team_id_label" class="hidden" data-target_team_id="{{ team.id }}"></label>
+            <table
+                    data-classes="table table-hover"
+                    data-toggle="table"
+                    data-pagination="true"
+                    data-locale="zh-CN"
+                    data-search="true"
+                    data-search-align="left"
+                    id="team_role_info_table"
+            >
+
+                <thead>
+                <tr>
+                    <th>名字</th>
+                    <th>类型</th>
+                    <th>角色</th>
+                </tr>
+                </thead>
+                <tbody id="team_role_tbody">
+                {% for project_role in team_role.project %}
+                    <tr>
+                        <td><a href="">{{ project_role.0.name }}</a></td>
+                        <td>项目</td>
+                        <td>
+                            {% for role in project_role.1 %}
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-default"
+                                            data-container="#team_role_div"
+                                            data-trigger="hover"
+                                            data-toggle="popover"
+                                            data-placement="top"
+                                            data-content="{{ role.description }}">
+                                        {{ role.display_name }}
+                                    </button>
+                                    {% if pm_add_system_role or pm_add_team_role %}
+                                        <button type="button" class="btn btn-default remove_team_role"
+                                                data-role_id="{{ role.id }}">
+                                            <i class="glyphicon glyphicon-remove"></i>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                {% for inventory_role in team_role.inventory %}
+                    <tr>
+                        <td><a href="">{{ inventory_role.0.name }}</a></td>
+                        <td>仓库</td>
+                        <td>
+                            {% for role in inventory_role.1 %}
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-default"
+                                            data-container="#team_role_div"
+                                            data-trigger="hover"
+                                            data-toggle="popover"
+                                            data-placement="top"
+                                            data-content="{{ role.description }}">
+                                        {{ role.display_name }}
+                                    </button>
+                                    {% if pm_add_system_role or pm_add_team_role %}
+                                        <button type="button" class="btn btn-default remove_team_role"
+                                                data-role_id="{{ role.id }}">
+                                            <i class="glyphicon glyphicon-remove"></i>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                {% for template_role in team_role.template %}
+                    <tr>
+                        <td><a href="">{{ template_role.0.name }}</a></td>
+                        <td>模板</td>
+                        <td>
+                            {% for role in template_role.1 %}
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-default"
+                                            data-container="#team_role_div"
+                                            data-trigger="hover"
+                                            data-toggle="popover"
+                                            data-placement="top"
+                                            data-content="{{ role.description }}">
+                                        {{ role.display_name }}
+                                    </button>
+                                    {% if pm_add_system_role or pm_add_team_role %}
+                                        <button type="button" class="btn btn-default remove_team_role"
+                                                data-role_id="{{ role.id }}">
+                                            <i class="glyphicon glyphicon-remove"></i>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block foot_js %}
+    <script>
+        $(function () {
+            $("#team_info_role").addClass("active");
+            $('[data-toggle="popover"]').popover();
+            $('#team_role_info_table').on('search.bs.table', function (e, arg1, arg2) {
+                $('[data-toggle="popover"]').popover();
+            })
+        });
+    </script>
+    <script src="{% static 'js/team_info_role.js' %}"></script>
+    {{ block.super }}
+{% endblock %}

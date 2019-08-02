@@ -1,0 +1,39 @@
+{% extends "main.html" %}
+
+{% block title %}
+    {{ block.super }}
+{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{% url 'organization:organizations' %}">组织</a></li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+{% endblock %}
+
+{% block foot_js %}
+    <script type="text/javascript">
+        toastr.options = {
+            'positionClass': 'toast-bottom-right',
+            'preventDuplicates': true
+        };
+
+        function refresh(time) {
+            setTimeout(
+                function () {
+                    window.location.reload();
+                }, time)
+        }
+
+        $(document).ready(function () {
+            $('#{{ app }}').addClass('dorne-sidebar-active');
+        });
+    </script>
+    {{ block.super }}
+{% endblock %}

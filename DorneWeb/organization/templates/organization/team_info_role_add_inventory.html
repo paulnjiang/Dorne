@@ -1,0 +1,36 @@
+<div>
+    <table id="inventory_table" data-classes="table table-hover"
+                data-toggle="table"
+                data-pagination="true"
+                data-locale="zh-CN"
+                data-search="true"
+                data-search-align="left">
+        <thead>
+        <tr>
+            <th></th>
+            <th>名字</th>
+            <th>描述</th>
+        </tr>
+        </thead>
+        <tbody id="inventory_table_tbody">
+        {% for inventory in inventories %}
+            <tr id={{ inventory.id }}>
+                <td><input type="checkbox"></td>
+                <td name="inventory_name">{{ inventory.name }}</td>
+                <td name="description">{{ inventory.description }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <hr/>
+    <div class="row dorne-label">
+        <label for="inventory_role_select_id" style="color:red">*</label>角色
+    </div>
+    <select id="inventory_role_select_id" title="---选择角色---" class="selectpicker">
+        <option value="inventory_admin">仓库管理员</option>
+        <option value="inventory_user">仓库使用者</option>
+    </select>
+</div>

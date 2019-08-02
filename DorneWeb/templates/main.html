@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ block.super }}
+{% endblock %}
+
+{% block profile %}
+    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+        <i class="glyphicon glyphicon-user"></i>
+        <span>{{ user.chinese_name }}</span>
+    </a>
+{% endblock %}
+
+{% block side_menu %}
+    <ul class="nav dorne-sidebar" id="side-menu">
+        <li>
+            <a id="sidebarToggle" href="#"><i class="glyphicon glyphicon-menu-hamburger"></i></a>
+        </li>
+        <li>
+            <span style="color: #aaa;">视图</span>
+            <ul class="nav dorne-sidebar-sub">
+                <!--<li>-->
+                    <!--<a id='dashboard' href="#" title="仪表板">-->
+                        <!--<i class="glyphicon glyphicon-dashboard"></i>-->
+                        <!--<span>仪表盘</span>-->
+                    <!--</a>-->
+                <!--</li>-->
+                <li>
+                    <a id='jobs' href="{% url 'job:jobs' %}" title="任务列表">
+                        <i class="glyphicon glyphicon-tasks"></i>
+                        <span>任务</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <span style="color: #aaa;">资源</span>
+            <ul class="nav dorne-sidebar-sub">
+                <li>
+                    <a id='inventory' href="{% url 'inventory:inventories' %}" title="管理仓库">
+                        <i class="glyphicon glyphicon-th-list"></i>
+                        <span>仓库</span>
+
+                    </a>
+                </li>
+                <li>
+                    <a id='projects' href="{% url 'project:projects' %}" title="管理项目">
+                        <i class="glyphicon glyphicon-import"></i>
+                        <span>项目</span>
+                    </a>
+                </li>
+                <li>
+                    <a id='templates' href="{% url 'project:templates' %}" title="管理任务模版">
+                        <i class="glyphicon glyphicon-duplicate"></i>
+                        <span>任务模版</span>
+                    </a>
+                </li>
+
+            </ul>
+        </li>
+        <li>
+            <span style="color: #aaa;">访问</span>
+            <ul class="nav dorne-sidebar-sub">
+                <li>
+                    <a id='organizations' href="{% url 'organization:organizations' %}" title="组织">
+                        <i class="glyphicon glyphicon-globe"></i>
+                        <span>组织机构</span>
+                    </a>
+                </li>
+                <li>
+                    <a id='users' href="{% url 'user:users' %}" title="用户">
+                        <i class="glyphicon glyphicon-user"></i>
+                        <span>用户</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block foot_js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#sidebarToggle").click(function () {
+                /* Act on the event */
+                if ($('.sidebar').css('width') == "200px") {
+                    $("#side-menu span").hide();
+                    $('.dorne-sidebar-sub').css('border-bottom', '1px solid #757272c9');
+                    $(".sidebar").animate({width: "55px"}, 300, function () {
+                        $(".sidebar").addClass('dorne-sidebar-toggled');
+                        $(".content").addClass('dorne-wapper-toggled');
+                    });
+                } else {
+                    $(".content").removeClass('dorne-wapper-toggled');
+                    $(".sidebar").removeClass('dorne-sidebar-toggled');
+                    $('.dorne-sidebar-sub').css('border-bottom', 'none');
+                    $(".sidebar").animate({width: "200px"}, 250, function () {
+                        $("#side-menu span").show();
+                    });
+                }
+            });
+
+            $('#{{ app }}').addClass('dorne-sidebar-active');
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>Dorne2配管系统|登录</title>
+
+    <link href="{% static 'image/conf_manage.ico' %}" rel="shortcut icon" type="image/x-icon" />
+
+    {% include 'user/_login_cdn_css.html' %}
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/signin.css' %}" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="middle-box text-center loginscreen animated fadeIn">
+    <div>
+        <div></div>
+        <h3 class="form-signin-heading">Dorne2配管系统</h3>
+        <form class="form-signin" action="{% url 'user:login' %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.email }}
+            </div>
+            <div class="form-group">
+                {{ form.password }}
+            </div>
+            <button type="submit" class="btn btn-lg btn-primary btn-block">登录</button>
+            <span style="color: red;display:none;" id="errmsg">{{ errmsg }}</span><br>
+        </form>
+        <p class="m-t">
+            <small><strong>Copyright Dorne2配管系统 &copy; 2018-2019</strong></small>
+        </p>
+    </div>
+
+</div> <!-- /container -->
+{% include 'user/_login_cdn_js.html' %}
+<script>
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "progressBar": false,
+        "preventDuplicates": true,
+        "positionClass": "toast-top-center",
+        "onclick": null,
+        //错误提示10秒
+        "showDuration": "10000",
+        "hideDuration": "10000",
+        "timeOut": "10000",
+        "extendedTimeOut": "800",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
+    errmsg = $("#errmsg").text();
+    if (errmsg) {
+        toastr.error(errmsg, "错误")
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,315 @@
+/*
+Dorn2 css file
+*/
+
+.dorne-header-nav {
+    background-color: #205081;
+    color: #ffffff;
+    border-bottom: 1px solid #2e3d54;
+    height: 51px;
+    padding: 0px 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+.dorne-header-nav a {
+    color: #ffffff !important;
+}
+
+.dorne-header-nav a:hover,
+.dorne-header-nav a:focus {
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.navbar-header embed {
+    padding: 0px;
+    margin: 0px;
+    width: 50px;
+}
+
+.dorne-header-brand {
+    float: left;
+    height: 50px;
+    padding: 15px 15px;
+    font-size: 20px;
+    line-height: 20px;
+}
+
+.dorne-navbar-right {
+    float: right !important;
+    padding: 15px 5px;
+    margin-right: 5px;
+}
+
+.dorne-wrapper {
+    display: block;
+    position: fixed;
+    top: 51px;
+    left: 0;
+    padding: 0px;
+    margin: 0px;
+    min-height: calc(100vh - 51px);
+    width: 100%;
+    overflow-y: scroll;
+    z-index: -1;
+}
+
+.content {
+    display: block;
+    position: absolute;
+    margin-left: 200px;
+    padding: 0px;
+    width: calc(100% - 200px);
+    color: #404040;
+    min-height: calc(100% - 51px);
+}
+
+.content a:linked {
+    color: #404040;
+}
+
+.content a:hover,
+.content a:focus {
+    color: #205081 !important;
+}
+
+.content a:actived {
+    color: #404040;
+}
+
+.dorne-wapper-toggled {
+    margin-left: 55px !important;
+    width: calc(100% - 55px);
+}
+
+.sidebar {
+    background-color: #404040;
+    display: inline-block;
+    position: fixed;
+    top: 51px;
+    left: 0;
+    width: 200px;
+    margin-left: 0px;
+    height: 100%;
+    z-index: 10;
+}
+
+.dorne-sidebar {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0px;
+    min-height: calc(100% - 51px);
+    color: #ffffff;
+}
+
+.dorne-sidebar li {
+    margin-left: 0px;
+
+}
+
+.dorne-sidebar li span {
+    display: block;
+    font-size: 1.5rem;
+    padding: 5px 15px;
+}
+
+.dorne-sidebar-sub {
+    display: flex;
+    flex-direction: column;
+    border-bottom: none;
+}
+
+.dorne-sidebar-sub li {
+    margin-left: 0px;
+}
+
+.dorne-sidebar-sub li a {
+    display: block;
+    padding: 15px 15px;
+    color: #ffffff;
+}
+
+.dorne-sidebar-active {
+    color: #205081 !important;
+    background-color: #ffffff !important;
+}
+
+.dorne-sidebar-sub li a:hover {
+    color: #205081;
+    background-color: #ccc;
+}
+
+.dorne-sidebar-sub li a:active {
+    color: #205081;
+}
+
+.dorne-sidebar-sub li a span {
+    display: inline-block;
+    padding: 0px;
+    margin-left: 15px;
+    vertical-align: text-bottom;
+}
+
+.dorne-sidebar i {
+    font-size: 2rem;
+}
+
+.dorne-sidebar-toggled {
+    overflow: visible;
+}
+
+.dorne-sidebar-toggled span {
+    display: inline-block;
+    font-size: 0.75rem;
+}
+
+.dorne-sidebar-toggled i {
+    font-size: 2rem;
+}
+
+.dorne-sidebar-toggled a {
+    text-align: center;
+}
+
+.dorne-icon-ctrl {
+    width: 60px;
+    height: 50px;
+    padding: 15px;
+    vertical-align: bottom;
+    display: inline-block;
+}
+
+#sidebarToggle {
+    color: #ffffff;
+    display: inline-block;
+    max-width: 55px;
+    text-align: center;
+}
+
+#sidebarToggle:link {
+    color: #ffffff;
+    background-color: #404040;
+}
+
+#sidebarToggle:visited {
+    color: #ffffff;
+    background-color: #404040;
+}
+
+#sidebarToggle:hover {
+    color: #ffffff;
+    background-color: #404040;
+}
+
+#sidebarToggle:active {
+    color: #ffffff;
+    background-color: #404040;
+}
+
+.dorne-breadcrumb {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #ddd;
+    font-size: 1em;
+    border-radius: 0px;
+}
+
+.dorne-panel-heading,
+.dorne-panel-footer {
+    background-color: #ffffff !important;
+}
+
+.dorne-table-nav {
+    display: block;
+    width: 100%;
+    text-align: right;
+    margin: 0px;
+    padding-right: 20px;
+}
+
+.btn-dorne {
+    margin-left: 5px;
+}
+
+.dorne-panel-content {
+    margin-bottom: 5px;
+}
+
+.dorne-list-group {
+    border: 1px solid transparent;
+    border-radius: 4px;
+    border-color: #ddd;
+    margin-top: 1.5em;
+}
+
+.dorne-action {
+    display: inline-block;
+    margin-right: 15px;
+    font-size: 1.25em;
+    float: left;
+}
+
+.dorne-searchbar {
+    display: inline-block;
+    margin: 1rem 0 2em 0;
+    width: 40%;
+}
+
+.dorne-create-item {
+    display: inline-block;
+    margin: 1rem 0 2em 0;
+    float: right;
+}
+
+.dorne-selectpicker {
+    margin: 0 0 0 0;
+}
+
+.dorne-label {
+    margin: 0 0 0 0;
+}
+
+.dorne-collapse {
+    float:right;
+    display: inline-block;
+    margin-top: -18px
+}
+
+.glyphicon_button {
+    color: #404040;
+    background-color: #fff;
+    border-color: #fff;
+    font-size: 1.25em;
+}
+
+.panel_close_btn {
+    float: right;
+}
+
+.error_text {
+    color: #a94442;
+}
+
+.description_in_table {
+    white-space: pre-wrap;
+}
+
+.textarea_json {
+    resize: vertical;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.input_readonly {
+    background-color: #fff !important;
+}
+
+.panel {
+    box-shadow: 0 1px 2px rgba(150, 150, 150, 0.3);
+}
+
+.vars_format_btn {
+    margin: 5px 0 0 0;
+}

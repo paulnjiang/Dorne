@@ -1,0 +1,36 @@
+<div>
+    <table id="template_table" data-classes="table table-hover"
+                data-toggle="table"
+                data-pagination="true"
+                data-locale="zh-CN"
+                data-search="true"
+                data-search-align="left">
+        <thead>
+        <tr>
+            <th></th>
+            <th>名字</th>
+            <th>描述</th>
+        </tr>
+        </thead>
+        <tbody id="template_table_tbody">
+        {% for template in templates %}
+            <tr id={{ template.id }}>
+                <td><input type="checkbox"></td>
+                <td name="template_name">{{ template.name }}</td>
+                <td name="description">{{ template.description }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <hr/>
+    <div class="row dorne-label">
+        <label for="template_role_select_id" style="color:red">*</label>角色
+    </div>
+    <select id="template_role_select_id" title="---选择角色---" class="selectpicker">
+        <option value="template_admin">模板管理员</option>
+        <option value="template_user">模板使用者</option>
+    </select>
+</div>

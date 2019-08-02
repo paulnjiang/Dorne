@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="height=device-height, initial-scale=1">
+
+    {% block title %}<title>Sunspear</title>{% endblock %}
+    <link href="{% static 'image/conf_manage.ico' %}" rel="shortcut icon" type="image/x-icon" />
+
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <!--<link href="{% static 'css/bootstrap-theme.css' %}" rel="stylesheet">-->
+    <link href="{% static 'css/bootstrap-select.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-table.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/sweetalert2.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/pace-theme-minimal.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/jquery.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/toastr.min.css' %}" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="{% static 'css/all.css' %}"
+          integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+          crossorigin="anonymous" rel="stylesheet" >
+    <link href="{% static 'css/toastr.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/dorne.css' %}" rel="stylesheet">
+    {% block css %}
+        <!-- css -->
+    {% endblock %}
+    {% block head_js %}
+    {% endblock %}
+</head>
+
+<body>
+    <nav class="nav dorne-header-nav" role="navigation">
+        <div class="navbar-header">
+            <embed type='image/svg+xml' src="{% static '/image/Martell-House.svg' %}">
+        </div>
+        <div class="navbar-header">
+            <a class="dorne-header-brand" href="/">Sunspear</a>
+        </div>
+        <div class="dorne-navbar-right">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <a href="{% url 'user:logout' %}"><i class="glyphicon glyphicon-log-out"></i></a>
+            </a>
+        </div>
+        <div class="dorne-navbar-right">
+            {% block profile %}
+                <!-- user profile -->
+            {% endblock %}
+        </div>
+    </nav>
+    <div class="dorne-wrapper">
+        <div class="sidebar" id="sidebar">
+            {% block side_menu %}
+                <!-- side menu -->
+            {% endblock %}
+        </div>
+        <div class="content">
+            {% block breadcrumb %}
+                <!-- breadcrumb  -->
+            {% endblock %}
+            <div class="container-fluid">
+                {% block content %}
+
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-select.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-table.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-table-zh-CN.min.js' %}"></script>
+    <script src="{% static 'js/sweetalert2.all.min.js' %}"></script>
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/pace.min.js' %}"></script>
+    <script src="{% static 'js/toastr.min.js' %}"></script>
+    {% block foot_js %}
+    {% endblock %}
+</body>
+
+</html>

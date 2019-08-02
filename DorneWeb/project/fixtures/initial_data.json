@@ -1,0 +1,34 @@
+[
+  {
+    "model": "project.project",
+    "pk": 1,
+    "fields": {
+      "name": "Demo project",
+      "description": "测试project",
+      "organization_id": 1
+    }
+  },
+  {
+    "model": "project.scmtype",
+    "pk": 1,
+    "fields": {
+      "name": "Git",
+      "description": "Git类型"
+    }
+  },
+  {
+    "model": "project.scm",
+    "pk": 1,
+    "fields": {
+      "name": "Demo SCM",
+      "description": "测试SCM",
+      "url": "https://code.mzsvn.com/Sothoryos/Dorne2.git",
+      "branch": "master",
+      "revision": "4df243",
+      "update_onlaunch": false,
+      "username": "wangjunjie",
+      "scm_type_id": 1,
+      "project_id": 1
+    }
+  }
+]

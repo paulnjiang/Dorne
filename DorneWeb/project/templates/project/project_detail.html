@@ -1,0 +1,107 @@
+{% extends 'project/project_base.html' %}
+{% load static %}
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{% url 'project:projects' %}">项目</a></li>
+        <li><a href="{% url 'project:project_detail' project.id %}">详情</a></li>
+    </ol>
+{% endblock %}
+
+{% block inner_content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title">项目详情</h1>
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal" action="{% url 'project:project_edit' project.id %}" method="post">
+                <div class="form-group">
+                    <label class="col-sm-4"><span style="color: red;">*</span> 名称</label>
+                    <label class="col-sm-4"><span style="color: red;">*</span> 所属组织</label>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        {{ form.name }}
+                    </div>
+                    <div class="col-sm-4">
+                        <a href="{% url 'organization:organization_detail' project.organization.id %}">{{ project.organization.name }}</a>
+                    </div>
+                    <div class="hidden">
+                        {{ form.organization_id }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4">描述</label>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        {{ form.description }}
+                    </div>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <label class="col-sm-4">源码管理类型</label>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        {{ form.scm_type }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4"><span style="color: red;">*</span> URL</label>
+                    <label class="col-sm-4"><span style="color: red;">*</span> 用户名</label>
+                    <label class="col-sm-4">分支</label>
+                    <label class="hidden">Revision</label>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        {{ form.url }}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form.username }}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form.branch }}
+                    </div>
+                    <div class="hidden">
+                        {{ form.revision }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        {{ pro_sync_status }}
+                    </div>
+                </div>
+
+                <div class="form-group" id="action_button_group">
+                    <div class="col-sm-6">
+                        {% if pm.update_project %}
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary">提交修改</button>
+                                <button type="reset" class="btn btn-default">还原</button>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% if pm.sync_project %}
+                        <div class="col-sm-6 text-right">
+                            <button type="button" class="btn btn-primary sync_project"
+                                    data-project_id="{{ project.id }}">同步版本库
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block foot_js %}
+    <script>
+        $(function () {
+            $('#pill_detail').addClass('active');
+        });
+    </script>
+    <script src="{% static 'js/project_detail.js' %}"></script>
+    {{ block.super }}
+{% endblock %}

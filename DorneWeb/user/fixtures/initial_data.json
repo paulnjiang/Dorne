@@ -1,0 +1,53 @@
+[
+  {
+    "model": "user.team",
+    "pk": 1,
+    "fields": {
+      "name": "SRE Team",
+      "description": "SRE团队",
+      "organization_id": 1
+    }
+  },
+
+  {
+    "model": "user.user",
+    "pk": 1,
+    "fields": {
+      "name": "wangjunjie",
+      "chinese_name": "王俊杰",
+      "email": "wangjunjie@miaozhen.com",
+      "phone": "17610738711",
+      "system_admin": false,
+      "organization_admin": false,
+      "team_admin": false,
+      "team_id": 1,
+      "organization_id": 1
+    }
+  },
+
+  {
+    "model": "user.user",
+    "pk": 2,
+    "fields": {
+      "name": "guobin",
+      "chinese_name": "郭镔",
+      "email": "guobin@miaozhen.com",
+      "phone": "17610738711",
+      "system_admin": false,
+      "organization_admin": false,
+      "team_admin": false
+    }
+  },
+
+  {
+    "model": "user.uac",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "organization": 1,
+      "resource": -1,
+      "object": -1,
+      "role": 1000
+    }
+  }
+]

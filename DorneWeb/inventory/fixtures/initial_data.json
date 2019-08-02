@@ -1,0 +1,12 @@
+[
+  {
+    "model": "inventory.inventory",
+    "pk": 1,
+    "fields": {
+      "name": "Demo inventory",
+      "description": "测试Inventory",
+      "vars": "{\"hello\": \"wrold\"}",
+      "organization_id": 1
+    }
+  }
+]

@@ -1,0 +1,208 @@
+{% extends 'inventory/inventory_base.html' %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb dorne-breadcrumb">
+    <li><i class="glyphicon glyphicon-home" ></i></li>
+    <li><a href="{% url 'inventory:inventories' %}">仓库列表</a></li>
+    <li><a href="{% url 'inventory:inventory_detail' inventory.id %}">{{ inventory.name }}</a></li>
+    <li><a href="{{ request.get_all_path }}">用户与团队</a></li>
+</ol>
+{% endblock %}
+
+{% block inner_content %}
+<div class="row">
+    <div class="col-sm-6">
+        <div class="panel panel-default" id="panel_user_role">
+            <div class="panel-heading">
+                <h1 class="panel-title">用户列表</h1>
+            </div>
+            <div class="panel-body table-responsive" style="overflow: visible;">
+                {% if pm.add_inventory_role %}
+                    <div class="collapse" id="collapse_add_role">
+                        <form class="form-horizontal" action="{% url 'inventory:inventory_roles_add' inventory.id %}" method="post">
+                            <input type="hidden" name="target" value="user">
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <select name="user_id" class="form-control selectpicker" multiple="multiple" data-title="----选择用户----" data-live-search="true" data-size="8">
+                                        {% for user in all_users %}
+                                            <option value="{{ user.id }}">{{ user.chinese_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <select name="role_id" class="form-control selectpicker" data-title="----选择角色----" data-live-search="true" data-size="8">
+                                        {% for role in roles %}
+                                            <option value="{{ role.id }}">{{ role.display_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-sm-1 text-right">
+                                    <button type="submit" class="btn btn-primary">添加</button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                    </div>
+                    <div class="dorne-create-item">
+                        <a class="dorne-action" data-toggle="collapse" href="#collapse_add_role"><i class="glyphicon glyphicon-plus-sign"></i></a>
+                    </div>
+                {% endif %}
+                <table
+                    data-classes="table table-hover"
+                    data-toggle="table"
+                    data-pagination="true"
+                    data-locale="zh-CN"
+                    data-search="true"
+                    data-search-align="left"
+                    id='user_table'>
+                    <thead>
+                        <tr>
+                            <th data-sortable="true">用户</th>
+                            <th>角色</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for user, roles in users_with_roles %}
+                        <tr>
+                            <td><a href="#">{{ user.chinese_name }}</a></td>
+                            <td>
+                                {% for role in roles %}
+                                    <div class="btn-group btn-group-sm">
+                                        <button
+                                            type="button"
+                                            class="btn btn-default"
+                                            data-container="#panel_user_role"
+                                            data-trigger="hover"
+                                            data-toggle="popover"
+                                            data-placement="top"
+                                            data-content="{{ role.description }}">{{ role.display_name }}</button>
+                                        {% if pm.remove_inventory_role and role.resource_type == 'inventory' %}
+                                        <button type="button" class="btn btn-default remove_user_role" data-user_id="{{ user.id }}" data-role_id="{{ role.id }}"><span class="glyphicon glyphicon-remove"></span></button>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <form id="remove_user_role_form" action="{% url 'inventory:inventory_roles_remove' inventory.id %}" method="post" hidden="hidden">
+            <input type="hidden" name="target" value="user">
+            <input type="hidden" name="user_id">
+            <input type="hidden" name="role_id">
+        </form>
+    </div>
+    <div class="col-sm-6">
+        <div class="panel panel-default" id="panel_team_role">
+            <div class="panel-heading">
+                <h1 class="panel-title">团队列表</h1>
+            </div>
+            <div class="panel-body table-responsive" style="overflow: visible;">
+                {% if pm.add_inventory_role %}
+                    <div class="collapse" id="collapse_add_role_team">
+                        <form class="form-horizontal" action="{% url 'inventory:inventory_roles_add' inventory.id %}" method="post">
+                            <input type="hidden" name="target" value="team">
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <select name="team_id" class="form-control selectpicker" multiple="multiple" data-title="----选择团队----" data-live-search="true" data-size="8">
+                                        {% for team in all_teams %}
+                                            <option value="{{ team.id }}">{{ team.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <select name="role_id" class="form-control selectpicker" data-title="----选择角色----" data-live-search="true" data-size="8">
+                                        {% for role in roles %}
+                                            <option value="{{ role.id }}">{{ role.display_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-sm-1 text-right">
+                                    <button type="submit" class="btn btn-primary">添加</button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                    </div>
+                    <div class="dorne-create-item">
+                        <a class="dorne-action" data-toggle="collapse" href="#collapse_add_role_team"><i class="glyphicon glyphicon-plus-sign"></i></a>
+                    </div>
+                {% endif %}
+                <table
+                    data-classes="table table-hover"
+                    data-toggle="table"
+                    data-pagination="true"
+                    data-locale="zh-CN"
+                    data-search="true"
+                    data-search-align="left"
+                    id='team_table'>
+                    <thead>
+                        <tr>
+                            <th data-sortable="true">团队</th>
+                            <th>角色</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for team, roles in teams_with_roles %}
+                        <tr>
+                            <td><a href="#">{{ team.name }}</a></td>
+                            <td>
+                                {% for role in roles %}
+                                    <div class="btn-group btn-group-sm">
+                                        <button
+                                            type="button"
+                                            class="btn btn-default"
+                                            data-container="#panel_team_role"
+                                            data-trigger="hover"
+                                            data-toggle="popover"
+                                            data-placement="top"
+                                            data-content="{{ role.description }}">{{ role.display_name }}</button>
+                                        {% if pm.remove_inventory_role and role.resource_type == 'inventory' %}
+                                            <button type="button" class="btn btn-default remove_team_role" data-team_id="{{ team.id }}" data-role_id="{{ role.id }}"><span class="glyphicon glyphicon-remove"></span></button>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <form id="remove_team_role_form" action="{% url 'inventory:inventory_roles_remove' inventory.id %}" method="post" hidden="hidden">
+            <input type="hidden" name="target" value="team">
+            <input type="hidden" name="team_id">
+            <input type="hidden" name="role_id">
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block foot_js %}
+{{ block.super }}
+<script>
+$(function(){
+    $('.selectpicker').selectpicker();
+    
+    $('#pill_roles').addClass('active');
+
+    $('[data-toggle="popover"]').popover();
+
+    $('#user_table').on('click', '.remove_user_role', function(){
+        $('#remove_user_role_form>input[name=user_id]').val($(this).data('user_id'));
+        $('#remove_user_role_form>input[name=role_id]').val($(this).data('role_id'));
+        $('#remove_user_role_form').submit();
+        return false;
+    });
+
+    $('#team_table').on('click', '.remove_team_role', function(){
+        $('#remove_team_role_form>input[name=team_id]').val($(this).data('team_id'));
+        $('#remove_team_role_form>input[name=role_id]').val($(this).data('role_id'));
+        $('#remove_team_role_form').submit();
+        return false;
+    });
+});
+</script>
+{% endblock %}

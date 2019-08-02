@@ -1,0 +1,75 @@
+{% extends 'project/base.html' %}
+{% load static %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{{ request.get_all_path }}">项目</a></li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title">项目列表</h1>
+        </div>
+        <div class="panel-body table-responsive">
+            <div class="dorne-create-item">
+                <a class="btn btn-success" href="{% url 'project:project_create' %}"><i
+                        class="glyphicon glyphicon-plus"></i></a>
+            </div>
+            <table
+                    data-classes="table table-hover"
+                    data-toggle="table"
+                    data-pagination="true"
+                    data-locale="zh-CN"
+                    data-search="true"
+                    data-search-align="left"
+                    id='projects_table'>
+                <thead>
+                <tr>
+                    <th width="20%" data-sortable="true">名称</th>
+                    <th width="20%">描述</th>
+                    <th width="20%" data-sortable="true">所属组织</th>
+                    <th width="20%">同步状态</th>
+                    <th width="20%">操作</th>
+                </tr>
+                </thead>
+                <tbody id="projects_tbody">
+                {% for pro in projects %}
+                    <tr>
+
+                        <td><a href="{% url 'project:project_detail' pro.project.id %}">{{ pro.project.name }}</a></td>
+                        <td>{{ pro.project.description }}</td>
+                        <td>
+                            <a href="{% url 'organization:organization_detail' pro.project.organization.id %}">{{ pro.project.organization.name }}</a>
+                        </td>
+                        <td>{{ pro.pro_sync_status }}</td>
+                        <td>
+                            {% if pro.pm.sync_project %}
+                                <a class="dorne-action sync_project" data-project_id="{{ pro.project.id }}"
+                                   title="同步项目">
+                                    <i class="glyphicon glyphicon-refresh"></i>
+                                </a>
+                            {% endif %}
+                            {% if pro.pm.delete_project %}
+                                <a class="dorne-action delete_project" data-project_id="{{ pro.project.id }}"
+                                   title="删除项目">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </a>
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block foot_js %}
+    <script src="{% static 'js/projects.js' %}"></script>
+    {{ block.super }}
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'organization/team_info.html' %}
+
+{% block tab_content %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">团队详情</h1></div>
+        <div class="panel-body table-responsive">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <label style="color:red">*</label>名字
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        {{ team_info_form.name }}
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <p>描述</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        {{ team_info_form.description }}
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <label style="color:red">*</label>组织
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <a href="{% url 'organization:organization_detail' team.organization.id %}">{{ team.organization.name }}</a>
+                    </div>
+                </div>
+                <div class="row hidden">
+                    <div>
+                        {{ team_info_form.organization }}
+                    </div>
+                </div>
+
+                <br/>
+                {% if pm_update_team %}
+                    <a href="{% url 'organization:organization_team' team.organization.id %}" class="btn btn-default">取消</a>
+                    <button type="submit" class="btn btn-primary">更新</button>
+                {% endif %}
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block foot_js %}
+    <script>
+        $(function () {
+            $("#team_info_detail").addClass("active");
+        });
+    </script>
+    {{ block.super }}
+{% endblock %}

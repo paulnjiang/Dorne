@@ -1,0 +1,155 @@
+{% extends 'organization/organization_info.html' %}
+{% load static %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{% url 'organization:organizations' %}">组织</a></li>
+        <li><a href="{% url 'organization:organization_detail' organization_id %}">{{ organization.name }}</a></li>
+        <li><a href="{% url 'organization:organization_user' organization_id %}">用户</a></li>
+    </ol>
+{% endblock %}
+
+{% block tab_content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title">用户列表</h1>
+        </div>
+        <div class="panel-body table-responsive">
+            <div id="user_role_div">
+                {% if pm_add_organization_role %}
+                    <div class="dorne-create-item">
+                        <a href="{% url 'organization:organization_user_add' organization_id %}" class="btn btn-success"
+                           title="新加用户">
+                            <i class="glyphicon glyphicon-plus"></i>
+                        </a>
+                    </div>
+                {% endif %}
+
+                <table data-classes="table table-hover"
+                       data-toggle="table"
+                       data-pagination="true"
+                       data-locale="zh-CN"
+                       data-search="true"
+                       data-search-align="left"
+                       id="organization_user_info_table">
+                    <thead>
+                    <tr>
+                        <th>中文名</th>
+                        <th>用户名</th>
+                        <th>角色</th>
+                    </tr>
+                    </thead>
+                    <tbody id="organization_user_tbody">
+                    {% for user, roles in users_with_oa_role %}
+                        <tr>
+                            {% if pm_add_organization_role %}
+                                <td><a href="{% url 'user:user_detail' user.id %}">{{ user.chinese_name }}</a></td>
+                            {% else %}
+                                <td>{{ user.chinese_name }}</td>
+                            {% endif %}
+                            <td>{{ user.name }}</td>
+                            <td>
+                                {% for role in roles %}
+                                    {% if system_admin %}
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-default"
+                                                    data-container="#user_role_div"
+                                                    data-toggle="popover"
+                                                    data-trigger="hover"
+                                                    data-placement="top"
+                                                    data-content="{{ role.description }}">
+                                                {{ role.display_name }}
+                                            </button>
+                                            <button type="button" class="btn btn-default remove_user_role"
+                                                    data-user_id="{{ user.id }}" data-role_id="{{ role.id }}">
+                                                <i class="glyphicon glyphicon-remove"></i>
+                                            </button>
+                                        </div>
+                                    {% elif pm_add_organization_role and role.name != 'system_admin' %}
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-default"
+                                                    data-container="#user_role_div"
+                                                    data-toggle="popover"
+                                                    data-trigger="hover"
+                                                    data-placement="top"
+                                                    data-content="{{ role.description }}">
+                                                {{ role.display_name }}
+                                            </button>
+                                            <button type="button" class="btn btn-default remove_user_role"
+                                                    data-user_id="{{ user.id }}" data-role_id="{{ role.id }}">
+                                                <i class="glyphicon glyphicon-remove"></i>
+                                            </button>
+                                        </div>
+                                    {% else %}
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-default"
+                                                    data-container="#user_role_div"
+                                                    data-toggle="popover"
+                                                    data-trigger="hover"
+                                                    data-placement="top"
+                                                    data-content="{{ role.description }}">
+                                                {{ role.display_name }}
+                                            </button>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% for user in users_with_om_role %}
+                        <tr>
+                            <td><a href="{% url 'user:user_detail' user.0.id %}">{{ user.0.chinese_name }}</a></td>
+                            <td>{{ user.0.name }}</td>
+                            <td>
+                                {% for role in user.1 %}
+                                    {% if pm_remove_organization_role %}
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-default"
+                                                    data-toggle="popover"
+                                                    data-trigger="hover"
+                                                    data-container="#user_role_div"
+                                                    data-placement="top"
+                                                    data-content="{{ role.description }}">
+                                                {{ role.display_name }}
+                                            </button>
+                                            <button type="button" class="btn btn-default remove_user_role"
+                                                    data-user_id="{{ user.0.id }}" data-role_id="{{ role.id }}">
+                                                <i class="glyphicon glyphicon-remove"></i>
+                                            </button>
+                                        </div>
+                                    {% else %}
+                                        <button type="button" class="btn btn-default"
+                                                data-container="#user_role_div"
+                                                data-toggle="popover"
+                                                data-trigger="hover"
+                                                data-placement="top"
+                                                data-content="{{ role.description }}">
+                                            {{ role.display_name }}
+                                        </button>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block foot_js %}
+    <script>
+        $(function () {
+            $("#organization_user").addClass("active");
+            $('[data-toggle="popover"]').popover();
+            $('#organization_user_info_table').on('search.bs.table', function (e, arg1, arg2) {
+                $('[data-toggle="popover"]').popover();
+            })
+        });
+    </script>
+    <script src="{% static 'js/organization_info_user.js' %}"></script>
+    {{ block.super }}
+{% endblock %}
+

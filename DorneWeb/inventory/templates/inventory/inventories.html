@@ -1,0 +1,149 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb dorne-breadcrumb">
+    <li><i class="glyphicon glyphicon-home" ></i></li>
+    <li><a href="{{ request.get_all_path }}">仓库列表</a></li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="panel panel-default" id="inv_create_panel" style="display: none;">
+    <div class="panel-heading">
+        <h1 class="panel-title">
+            新建仓库
+            <a class="panel_close_btn" id="inv_create_panel_close_btn" title="关闭">
+                <span class="glyphicon glyphicon-remove"></span>
+            </a>
+        </h1>
+    </div>
+    <div class="panel-body" style="overflow: visible;">
+        <form id="inv_create_form">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label">名称 <span style="color: red;">*</span></label>
+                        <input type="text" name="name" class="form-control" maxlength="32">
+                        <small
+                            class="help-block error_text"
+                            id="inv_name_err"></small>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label">所属组织 <span style="color: red;">*</span></label>
+                        <select
+                            name="organization_id"
+                            class="form-control selectpicker"
+                            data-title="----选择组织----"
+                            data-live-search="true"
+                            data-size="8">
+                            {% for org in organizations %}
+                                <option value="{{ org.id }}">{{ org.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <small
+                            class="help-block error_text"
+                            id="inv_organization_id_err"></small>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label">描述</label>
+                        <textarea
+                            name="description"
+                            class="form-control"
+                            rows="5"
+                            style="resize: vertical"></textarea>
+                        <small
+                            class="help-block error_text"
+                            id="inv_description_err"></small>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label">变量</label>
+                        <textarea
+                            name="vars"
+                            class="form-control textarea_json"
+                            rows="5"
+                            placeholder="请输入JSON格式的数据"></textarea>
+                       <button
+                            type="button"
+                            class="btn btn-default btn-sm"
+                            id="vars_format"
+                            style="margin: 5px 0 0 0;">格式化</button>
+                        <small
+                            class="help-block error_text"
+                            id="inv_vars_err"></small>
+                    </div>
+                </div>
+            </div>
+            <button
+                type="button"
+                class="btn btn-primary"
+                id="inv_create_submit_btn"
+                data-path="{{ path_api_inventory_create }}">提交</button>
+        </form>
+    </div>
+</div>
+
+
+<div class="panel panel-default" id="invs_panel">
+    <div class="panel-heading">
+        <h1 class="panel-title">仓库列表</h1>
+    </div>
+    <div class="panel-body table-responsive">
+        <div class="dorne-create-item">
+            <button type="button" class="btn btn-success" id="inv_create_panel_toggle_btn" title="新建仓库">
+                <span class="glyphicon glyphicon-plus"></span>
+            </button>
+        </div>
+        <table
+            data-classes="table table-hover"
+            data-toggle="table"
+            data-pagination="true"
+            data-locale="zh-CN"
+            data-search="true"
+            data-search-align="left"
+            data-url="{{ path_api_inventories }}"
+            data-method="get"
+            data-cache="false"
+            data-data-field="invs"
+            id="inv_table">
+            <thead>
+                <tr>
+                    <th
+                        data-sortable="true"
+                        data-field="name"
+                        data-formatter="formatter_inv_name"
+                        data-search-formatter="false">名称</th>
+                    <th
+                        data-field="description"
+                        data-class="description_in_table">描述</th>
+                    <th
+                        data-sortable="true"
+                        data-field="organization.name"
+                        data-formatter="formatter_inv_organization"
+                        data-search-formatter="false">所属组织</th>
+                    <th
+                        data-searchable="false"
+                        data-formatter="formatter_inv_operation"
+                        data-search-formatter="false">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block foot_js %}
+{{ block.super }}
+<script src="{% static 'inventory/js/inventory_validator.js' %}"></script>
+<script src="{% static 'inventory/js/inventories.js' %}"></script>
+{% endblock %}

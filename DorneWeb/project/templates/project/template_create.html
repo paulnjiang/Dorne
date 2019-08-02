@@ -1,0 +1,114 @@
+{% extends 'project/base.html' %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb dorne-breadcrumb">
+    <li><i class="glyphicon glyphicon-home" ></i></li>
+    <li><a href="{% url 'project:templates' %}">任务模版</a></li>
+    <li><a href="{{ request.get_all_path }}">新建</a></li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1 class="panel-title">新建任务模版</h1>
+    </div>
+    <div class="panel-body" style="overflow: visible;">
+        <form class="form-horizontal" action="{% url 'project:template_create' %}" method="post">
+            <div class="form-group">
+                <label class="col-sm-4">名称 <span style="color: red;">*</span></label>
+                <label class="col-sm-4">所属项目 <span style="color: red;">*</span></label>
+                <label class="col-sm-4">所属仓库 <span style="color: red;">*</span></label>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-4">
+                    <input type="text" name="name" class="form-control" maxlength="32">
+                </div>
+                <div class="col-sm-4">
+                    <select name="project_id" class="form-control selectpicker" data-title="----选择项目----" data-live-search="true" data-size="8">
+                        {% for pro in projects %}
+                            <option value="{{ pro.id }}">{{ pro.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    <select name="inventory_id" class="form-control selectpicker" data-title="----选择仓库----" data-live-search="true" data-size="8">
+                        {% for inv in inventories %}
+                            <option value="{{ inv.id }}">{{ inv.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4">任务脚本文件 <span style="color: red;">*</span></label>
+                <label class="col-sm-4">任务类型 <span style="color: red;">*</span></label>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-4">
+                    <select name="playbook" class="form-control selectpicker" data-title="----选择任务脚本文件----" data-live-search="true" data-size="8">
+                        {% for pro in projects %}
+                            {% for i in pro.playbooks %}
+                                <option value="{{ i }}" data-project_id="{{ pro.id }}" style="display: none;">{{ i }}</option>
+                            {% endfor %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    <select name="job_type" class="form-control selectpicker" data-title="----选择任务类型----" data-size="8">
+                        {% for i, j in job_type_choices %}
+                            <option value="{{ i }}">{{ j }}</option>
+                        {% endfor %}
+                    </select>
+                    <small>实际执行：执行真实任务</small>
+                    <br>
+                    <small>伪执行：仅检查脚本是否正确，不执行任务</small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4">动作标签</label>
+                <label class="col-sm-4">主机限制</label>
+                <label class="col-sm-4">任务并行进程数</label>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-4">
+                    <input type="text" name="job_tags" class="form-control" maxlength="128">
+                </div>
+                <div class="col-sm-4">
+                    <input type="text" name="limit" class="form-control" maxlength="64">
+                </div>
+                <div class="col-sm-4">
+                    <input type="number" name="forks" class="form-control" min="1" max="5">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4">描述</label>
+                <label class="col-sm-4">变量</label>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-4">
+                    <textarea name="description" class="form-control" rows="5" style="resize: vertical"></textarea>
+                </div>
+                <div class="col-sm-4">
+                    <textarea name="extra_variables" class="form-control" rows="5" style="resize: vertical"></textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">提交</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block foot_js %}
+<script type="text/javascript">
+    $(function(){
+        $('.selectpicker').selectpicker();
+    });
+
+    $('select[name=project_id]').on('changed.bs.select', function(e, clickedIndex, isSelected, previousValue){
+        $('select[name=playbook]>option').hide();
+        $('select[name=playbook]>option[data-project_id=' + $('select[name=project_id]').val() + ']').show();
+        $('select[name=playbook]').selectpicker('val', '').selectpicker('refresh').selectpicker('show');
+    });
+</script>
+{{ block.super }}
+{% endblock %}

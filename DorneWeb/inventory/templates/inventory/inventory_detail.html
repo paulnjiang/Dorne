@@ -1,0 +1,110 @@
+{% extends 'inventory/inventory_base.html' %}
+{% load static %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb dorne-breadcrumb">
+    <li><i class="glyphicon glyphicon-home" ></i></li>
+    <li><a href="{% url 'inventory:inventories' %}">仓库列表</a></li>
+    <li><a href="{{ request.get_all_path }}">{{ inventory.name }}</a></li>
+</ol>
+{% endblock %}
+
+{% block inner_content %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">仓库详情</h3>
+    </div>
+    <div class="panel-body">
+        <form id="inv_detail_form">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label">名称 <span style="color: red;">*</span></label>
+                        {% if pm.update_inventory %}
+                            <input type="text" name="name" class="form-control" maxlength="32" value="{{ inventory.name }}">
+                        {% else %}
+                            <input type="text" class="form-control input_readonly" value="{{ inventory.name }}" readonly="readonly">
+                        {% endif %}
+                        <small
+                            class="help-block error_text"
+                            id="inv_name_err"></small>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label">所属组织 <span style="color: red;">*</span></label>
+                        <p class="form-control-static"><a href="{% url  'organization:organization_detail' inventory.organization.id%}">{{ inventory.organization.name }}</a></p>
+                        <small
+                            class="help-block error_text"
+                            id="inv_organization_id_err"></small>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label">描述</label>
+                        {% if pm.update_inventory %}
+                            <textarea
+                                name="description"
+                                class="form-control"
+                                rows="5"
+                                style="resize: vertical">{{ inventory.description }}</textarea>
+                        {% else %}
+                            <textarea
+                                class="form-control input_readonly"
+                                rows="5"
+                                style="resize: vertical"
+                                readonly="readonly">{{ inventory.description }}</textarea>
+                        {% endif %}
+                        <small
+                            class="help-block error_text"
+                            id="inv_description_err"></small>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label">变量</label>
+                        {% if pm.update_inventory %}
+                            <textarea
+                                name="vars"
+                                class="form-control textarea_json"
+                                rows="5"
+                                placeholder="请输入JSON格式的数据">{{ inventory.vars }}</textarea>
+                            <button
+                                type="button"
+                                class="btn btn-default btn-sm"
+                                id="inv_vars_format"
+                                style="margin: 5px 0 0 0;">格式化</button>
+                        {% else %}
+                            <textarea
+                                class="form-control textarea_json input_readonly"
+                                rows="5"
+                                readonly="readonly">{{ inventory.vars }}</textarea>
+                        {% endif %}
+                        <small
+                            class="help-block error_text"
+                            id="inv_vars_err"></small>
+                    </div>
+                </div>
+            </div>
+            {% if pm.update_inventory %}
+                <div class="btn-group">
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        id="inv_detail_submit_btn"
+                        data-path="{% url 'inventory:api_inventory_edit' inventory.id %}">提交修改</button>
+                    <!-- <button type="reset" class="btn btn-default">还原</button> -->
+                </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block foot_js %}
+{{ block.super }}
+<script src="{% static 'inventory/js/inventory_validator.js' %}"></script>
+<script src="{% static 'inventory/js/inventory_detail.js' %}"></script>
+{% endblock %}

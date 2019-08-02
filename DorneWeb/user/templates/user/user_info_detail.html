@@ -1,0 +1,58 @@
+{% extends 'user/user_info.html' %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{% url 'user:users' %}">用户</a></li>
+        <li><a href="{% url 'user:user_detail' target_user.id %}">{{ target_user.chinese_name }}</a></li>
+        <li><a href="{% url 'user:user_detail' target_user.id %}">详细</a></li>
+    </ol>
+{% endblock %}
+
+{% block tab_content %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">用户详情</h1></div>
+        <div class="panel-body table-responsive">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-4 col-sm-14 col-xs-4">
+                        <p>用户名</p>
+                    </div>
+                    <div class="col-md-4 col-sm-14 col-xs-4">
+                        <p>中文名</p>
+                    </div>
+                    <div class="col-md-4 col-sm-14 col-xs-4">
+                        <p>邮箱</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-4 col-xs-4">
+                        {{ user_info_form.name }}
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-4">
+                        {{ user_info_form.chinese_name }}
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-4">
+                        {{ user_info_form.email }}
+                    </div>
+
+                </div>
+                <br/>
+                <!--button type="button" class="btn btn-default">取消</button>
+                <button type="submit" class="btn btn-primary">更新</button-->
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block foot_js %}
+    <script>
+        $(function () {
+            $("#user_detail").addClass("active");
+        });
+    </script>
+    {{ block.super }}
+{% endblock %}
+

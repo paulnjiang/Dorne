@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import os
+import sys
+
+from ansible.errors import AnsibleError, AnsibleOptionsError, AnsibleParserError
+from ansible.module_utils._text import to_text
+from gear_ansible.cli import GearPlayBookCLI
+from gear_ansible.report import Report
+
+
+if __name__ == '__main__':
+    me = os.path.basename(sys.argv[0])
+    args = [to_text(a, errors='surrogate_or_strict') for a in sys.argv]
+    exit_code = 0
+    cli = GearPlayBookCLI(args)
+    reporter = None
+    try:
+        cli.parse()
+        reporter = Report(cli.options.callback_url)
+        exit_code = cli.run()
+    except AnsibleOptionsError as e:
+        cli.parser.print_help()
+        print to_text(e)
+        exit_code = 5
+
+    except AnsibleParserError as e:
+        print to_text(e)
+        exit_code = 4
+
+    except AnsibleError as e:
+        print to_text(e)
+        exit_code = 1
+
+    except KeyboardInterrupt:
+        exit_code = 99
+
+    except Exception as e:
+        print to_text(e)
+        exit_code = 250
+
+    finally:
+        sys.exit(exit_code)

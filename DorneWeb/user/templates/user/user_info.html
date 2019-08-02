@@ -1,0 +1,14 @@
+{% extends 'user/base.html' %}
+
+{% block content %}
+
+    <ul class="nav nav-pills">
+        <li id="user_detail"><a href="{% url 'user:user_detail' target_user.id %}">详细</a></li>
+        <li id="user_organization"><a href="{% url 'user:user_organization' target_user.id %}">组织</a></li>
+        <li id="user_team"><a href="{% url 'user:user_team' target_user.id %}">团队</a></li>
+        <li id="user_role"><a href="{% url 'user:user_role' target_user.id %}">角色</a></li>
+    </ul>
+    <hr/>
+    {% block tab_content %}
+    {% endblock %}
+{% endblock %}

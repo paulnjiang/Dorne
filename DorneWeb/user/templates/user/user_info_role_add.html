@@ -1,0 +1,55 @@
+{% extends 'user/base.html' %}
+
+{% load static %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{% url 'user:users' %}">用户</a></li>
+        <li><a href="{% url 'user:user_detail' target_user.id %}">{{ target_user.chinese_name }}</a></li>
+        <li><a href="{% url 'user:user_role' target_user.id %}">角色</a></li>
+        <li><a href="{% url 'user:user_role_add' target_user.id %}">添加</a></li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+
+    <label class="hidden" id="target_user" data-target_user_id="{{ target_user.id }}"></label>
+    <ul class="nav nav-pills">
+        <li class="active" id="project_role"><a href="#project_tab" data-toggle="tab">项目</a></li>
+        <li id="inventory_role"><a href="#inventory_tab" data-toggle="tab">仓库</a></li>
+        <li id="template_role"><a href="#template_tab" data-toggle="tab">任务模板</a></li>
+        {% if is_system_admin %}
+            <li><a href="#system_tab" data-toggle="tab">系统</a></li>
+        {% endif %}
+    </ul>
+    <hr/>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">添加角色</h1></div>
+        <div class="panel-body table-responsive">
+            <div id="tab_content" class="tab-content">
+                <div class="tab-pane fade in active" id="project_tab">
+                    {% include 'user/user_info_role_add_project.html' %}
+                </div>
+                <div class="tab-pane fade" id="inventory_tab">
+                    {% include 'user/user_info_role_add_inventory.html' %}
+                </div>
+                <div class="tab-pane fade" id="template_tab">
+                    {% include 'user/user_info_role_add_template.html' %}
+                </div>
+                {% if is_system_admin %}
+                    <div class="tab-pane fade" id="system_tab">
+                        {% include 'user/user_info_role_add_system.html' %}
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-info" id="user_role_add_btn">添加</button>
+{% endblock %}
+
+{% block foot_js %}
+    {{ block.super }}
+    <script src="{% static 'js/user_info_role_add.js' %}"></script>
+{% endblock %}

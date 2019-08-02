@@ -1,0 +1,13 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<ul class="nav nav-pills">
+    <li id="pill_detail"><a href="{% url 'inventory:inventory_detail' inventory.id %}">详情</a></li>
+    <li id="pill_hosts"><a href="{% url 'inventory:inventory_hosts' inventory.id %}">主机</a></li>
+    <li id="pill_groups"><a href="{% url 'inventory:inventory_groups' inventory.id %}">组</a></li>
+    <li id="pill_roles"><a href="{% url 'inventory:inventory_roles' inventory.id %}">用户与团队</a></li>
+</ul>
+<br>
+{% block inner_content %}
+{% endblock %}
+{% endblock %}

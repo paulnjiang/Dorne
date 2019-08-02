@@ -1,0 +1,193 @@
+{% extends 'job/base.html' %}
+{% load extra_tags %}
+{% load static %}
+
+{% block css %}
+    {{ block.super }}
+    <style type="text/css">
+        .stat_success {
+            color: lightgreen;
+        }
+
+        .stat_changed {
+            color: orange;
+        }
+
+        .stat_skipped {
+            color: yellow;
+        }
+
+        .stat_failed {
+            color: red;
+        }
+
+        .stat_unreachable {
+            color: red;
+        }
+
+    </style>
+{% endblock %}
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{% url 'job:jobs' %}">任务</a></li>
+        <li>{{ job.name }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-4 col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3 class="panel-title">详细</h3></div>
+                <div class="panel-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-4">状态:</label>
+                            <label class="col-sm-4">{{ job.status_display }}</label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4">开始时间:</label>
+                            <label class="col-sm-8">{{ job.start_time }}</label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4">结束时间:</label>
+                            <label class="col-sm-8">
+                                {% if job.status != 'success' and job.status != 'failed' %}
+                                    <label>任务正在运行</label>
+                                {% else %}
+                                    {{ job.end_time }}
+                                {% endif %}
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4">任务模板:</label>
+                            <label class="col-sm-8"><a
+                                    href="{% url 'project:template_detail' job.job_template.id %}">{{ job.job_template.name }}</a></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4">仓库:</label>
+                            <label class="col-sm-8"><a
+                                    href="{% url 'inventory:inventory_detail' job.job_template.inventory.id %}">{{ job.job_template.inventory.name }}</a></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4">项目:</label>
+                            <label class="col-sm-8"><a
+                                    href="{% url 'project:project_detail' job.job_template.project.id %}">{{ job.job_template.project.name }}</a></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4">任务类型:</label>
+                            <label class="col-sm-8">{{ job.job_template.job_type | get_job_type }}</label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4">执行者:</label>
+                            <label class="col-sm-8"><a
+                                    href="{% url 'user:user_detail' job.user.id %}">{{ job.user.chinese_name }}</a></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4">任务脚本文件:</label>
+                            <label class="col-sm-8">{{ job.job_template.playbook }}</label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4">额外变量:</label>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <textarea rows="5" class="form-control">{{ job.job_template.extra_variables }}</textarea>
+                        </div>
+                        {% if pm_delete_job %}
+                            <button type="button" class="btn btn-danger delete_job" data-job_id="{{ job.id }}">删除
+                            </button>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8 col-md-8">
+            <div class="panel-group" id="job_info">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h3 class="panel-title">{{ job.name }}</h3></div>
+                    <div class="panel-body" style="background-color: black; color:white">
+                        {% if job.status == 'pending' %}
+                            <label>任务正在提交...</label>
+                        {% elif job.status == 'running' %}
+                            <label>任务正在运行...</label>
+                        {% elif job.status == 'run_falied' %}
+                            <label>运行playbook出错:{{ job_log.error }}</label>
+                        {% else %}
+                            {% for play in job_log.plays %}
+                                <label>剧本 [{{ play.play.name }}]</label>
+                                <label class="text-right">{{ play.play.duration.start | format_time }}~{{ play.play.duration.end | format_time }}</label>
+                                <br/><br/>
+                                {% for task in play.tasks %}
+                                    <label>任务 [{{ task.task.name }}]</label>
+                                    <label class="text-right">{{ task.task.duration.start | format_time }}~{{ task.task.duration.end | format_time }}</label>
+                                    <br/>
+                                    {% for host, host_args in task.hosts.items %}
+                                        {% if host_args.failed %}
+                                            <label class="stat_failed">错误:[{{ host }}]: 失败! =>
+                                                {"改变": {{ host_args.changed }}, "信息": "{{ host_args.msg }}",
+                                                "失败": {{ host_args.failed }} }</label>
+                                        {% elif host_args.unreachable %}
+                                            <label class="stat_unreachable">错误:[{{ host }}]: 不可达! =>
+                                                {"改变": {{ host_args.changed }}, "信息": "{{ host_args.msg }}",
+                                                "不可达": {{ host_args.failed }} }</label>
+                                        {% else %}
+                                            <label class="stat_success">成功:[{{ host }}]</label>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <br/><br/>
+                                {% endfor %}
+                            {% endfor %}
+                            <label>总览</label>
+                            <br/>
+                            {% for host, stat in job_log.stats.items %}
+                                {% if stat.failures != 0 or stat.unreachable != 0 %}
+                                    <label class="stat_failed">{{ host }}&nbsp;&nbsp;:&nbsp;&nbsp;</label>&nbsp;
+                                {% else %}
+                                    <label class="stat_success">{{ host }}&nbsp;&nbsp;:&nbsp;&nbsp;</label>
+                                {% endif %}
+
+                                {% if stat.ok != 0 %}
+                                    <label class="stat_success">成功={{ stat.ok }}&nbsp;&nbsp;</label>
+                                {% else %}
+                                    成功={{ stat.ok }}&nbsp;&nbsp;
+                                {% endif %}
+
+                                {% if stat.changed != 0 %}
+                                    <label class="stat_changed">改变={{ stat.changed }}&nbsp;&nbsp;</label>
+                                {% else %}
+                                    改变={{ stat.changed }}&nbsp;&nbsp;
+                                {% endif %}
+
+                                {% if stat.skipped != 0 %}
+                                    <label class="stat_skipped">跳过={{ stat.skipped }}&nbsp;&nbsp;</label>
+                                {% else %}
+                                    改变={{ stat.skipped }}&nbsp;&nbsp;
+                                {% endif %}
+
+                                {% if stat.unreachable != 0 %}
+                                    <label class="stat_unreachable">不可达={{ stat.unreachable }}&nbsp;&nbsp;</label>
+                                {% else %}
+                                    不可达={{ stat.unreachable }}&nbsp;&nbsp;
+                                {% endif %}
+
+                                {% if stat.failures != 0 %}
+                                    <label class="stat_failed">失败={{ stat.failures }}&nbsp;&nbsp;</label>
+                                {% else %}
+                                    失败={{ stat.failures }}&nbsp;&nbsp;
+                                {% endif %}
+                            {% endfor %}
+                            </div>
+                        {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block foot_js %}
+    <script src="{% static 'js/job_detail.js' %}"></script>
+    {{ block.super }}
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'organization/team_info.html' %}
+{% load static %}
+{% block tab_content %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">团队用户</h1></div>
+        <div class="panel-body table-responsive" id="team_role_div">
+            {% if pm_add_team_role %}
+                <div class="dorne-create-item">
+                    <a title="添加用户" href="{% url 'organization:team_info_user_add' team.id %}" class="btn btn-success">
+                        <i class="glyphicon glyphicon-plus"></i>
+                    </a>
+                </div>
+            {% endif %}
+
+            <table data-classes="table table-hover"
+                   data-toggle="table"
+                   data-pagination="true"
+                   data-locale="zh-CN"
+                   data-search="true"
+                   data-search-align="left">
+                <thead>
+                <tr>
+                    <th>中文名</th>
+                    <th>用户名</th>
+                    <th>邮箱</th>
+                    <th>角色</th>
+                </tr>
+                </thead>
+                <tbody id="team_user_tbody">
+                {% for user,user_role in team_users %}
+                    <tr>
+                        <td><a href="{% url 'user:user_detail' user.id %}">{{ user.chinese_name }}</a></td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            {% for role in user_role %}
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-default"
+                                            data-container="#team_role_div" data-toggle="popover"
+                                            data-trigger="hover"
+                                            data-placement="top" data-content="{{ role.description }}">
+                                        {{ role.display_name }}
+                                    </button>
+                                    {% if system_admin %}
+                                        <button type="button" class="btn btn-default remove_user_role_on_team"
+                                                data-role_id="{{ role.id }}" data-user_id="{{ user.id }}">
+                                            <i class="glyphicon glyphicon-remove"></i>
+                                        </button>
+                                    {% elif pm_add_team_role and role.name != 'system_admin' %}
+                                        <button type="button" class="btn btn-default remove_user_role_on_team"
+                                                data-role_id="{{ role.id }}" data-user_id="{{ user.id }}">
+                                            <i class="glyphicon glyphicon-remove"></i>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block foot_js %}
+    <script>
+        $(function () {
+            $("#team_info_user").addClass("active");
+            $('[data-toggle="popover"]').popover();
+        });
+    </script>
+    <script src="{% static 'js/team_info_user.js' %}"></script>
+    {{ block.super }}
+{% endblock %}

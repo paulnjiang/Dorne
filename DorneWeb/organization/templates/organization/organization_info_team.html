@@ -1,0 +1,74 @@
+{% extends 'organization/organization_info.html' %}
+{% load static %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{% url 'organization:organizations' %}">组织</a></li>
+        <li><a href="{% url 'organization:organization_detail' organization_id %}">{{ organization.name }}</a></li>
+        <li><a href="{% url 'organization:organization_team' organization_id %}">团队</a></li>
+    </ol>
+{% endblock %}
+
+{% block tab_content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title">团队列表</h1>
+        </div>
+        <div class="panel-body table-responsive">
+            {% if pm_create_team %}
+                <div class="dorne-create-item">
+                    <a title="新建团队" href="{% url 'organization:organization_team_create' organization_id %}"
+                       class="btn btn-success"><i
+                            class="glyphicon glyphicon-plus"></i></a>
+                </div>
+            {% endif %}
+
+
+            <table id="organization_team_table" data-classes="table table-hover"
+                data-toggle="table"
+                data-pagination="true"
+                data-locale="zh-CN"
+                data-search="true"
+                data-search-align="left">
+                <thead>
+                <tr>
+                    <th>名字</th>
+                    <th>描述</th>
+                    <th>所属组织</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for team in teams %}
+                    <tr>
+                        <td><a href="{% url 'organization:team_info_detail' team.id %}">{{ team.name }}</a></td>
+                        <td>{{ team.description }}</td>
+                        <td>{{ team.organization.name }}</td>
+                        <td>
+                            <a title="编辑" href="{% url 'organization:team_info_detail' team.id %}">
+                                <i class="glyphicon glyphicon-pencil"></i>
+                            </a>
+                            {% if pm_create_team %}
+                                <a title="删除" class="delete_team" data-team_id="{{ team.id }}">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block foot_js %}
+    <script>
+        $(function () {
+            $("#organization_team").addClass("active");
+        });
+    </script>
+    <script src="{% static 'js/organization_info_team.js' %}"></script>
+    {{ block.super }}
+{% endblock %}

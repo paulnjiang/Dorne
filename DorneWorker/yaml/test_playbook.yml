@@ -1,0 +1,5 @@
+- hosts: webservers
+  remote_user: gb
+  tasks:
+  - name: test
+    command: touch /home/gb/test_ansible

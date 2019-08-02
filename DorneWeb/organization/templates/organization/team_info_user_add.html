@@ -1,0 +1,79 @@
+{% extends 'organization/team_info.html' %}
+{% load static %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{% url 'organization:organizations' %}">组织</a></li>
+        <li><a href="{% url 'organization:organization_detail' organization_id %}">{{ organization.name }}</a></li>
+        <li><a href="{% url 'organization:organization_team' organization_id %}">团队</a></li>
+        <li><a href="{% url 'organization:team_info_detail' team.id %}">{{ team.name }}</a></li>
+        <li><a href="{% url 'organization:team_info_user_add' team.id %}">添加用户</a></li>
+    </ol>
+{% endblock %}
+
+{% block tab_content %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">添加用户</h1></div>
+        <div class="panel-body table-responsive">
+            <table data-classes="table table-hover"
+                   data-toggle="table"
+                   data-pagination="true"
+                   data-locale="zh-CN"
+                   data-search="true"
+                   data-search-align="left">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>用户名</th>
+                </tr>
+                </thead>
+                <tbody id="add_user_to_team_tbody">
+                {% for user in org_users_not_has_team %}
+                    <tr>
+                        <td><input type="checkbox" data-user_id="{{ user.id }}"></td>
+                        <td>{{ user.chinese_name }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div>
+                <div class="row dorne-label">
+                    <label for="team_role_select" style="color:red">*</label>角色
+                </div>
+                <div class="row dorne-selectpicker">
+                    <select id="team_role_select" data-team_id="{{ team.id }}" class="selectpicker">
+                    </select>
+                </div>
+                <hr/>
+            </div>
+            <button class="btn btn-success add_user_to_team">添加</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block foot_js %}
+    <script>
+        let team_id = $('#team_role_select').data('team_id');
+        let url = '/organization/ajax/team/' + team_id + '/role/';
+
+        $.get(url, function (data) {
+            let team_role_select = $('#team_role_select');
+            if (data.status) {
+                for (role in data.team_roles) {
+                    let option = $('<option></option>');
+                    option.attr('value', data.team_roles[role].id);
+                    option.text(data.team_roles[role].display_name);
+                    team_role_select.append(option);
+                }
+            } else {
+                Swal('出错', data.errmsg, 'error');
+            }
+        });
+        $(function () {
+            $("#team_info_user").addClass("active");
+        });
+    </script>
+    <script src="{% static 'js/team_info_user_add.js' %}"></script>
+    {{ block.super }}
+{% endblock %}

@@ -1,0 +1,202 @@
+{% extends 'project/project_base.html' %}
+{% load static %}
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{% url 'project:projects' %}">项目</a></li>
+        <li><a href="{{ request.get_all_path }}">角色</a></li>
+    </ol>
+{% endblock %}
+
+{% block inner_content %}
+    <label class="hidden" id="project_id" data-project_id="{{ project.id }}"></label>
+    <div class="panel panel-default" id="panel_user_role">
+        <div class="panel-heading">
+            <h1 class="panel-title">用户角色列表</h1>
+        </div>
+        <div class="panel-body table-responsive" style="overflow: visible;">
+            {% if pm.add_project_role %}
+                <div class="collapse" id="collapse_add_role">
+                    <form class="form-horizontal" action="{% url 'project:project_roles_add' project.id %}"
+                          method="post">
+                        <input type="hidden" name="target" value="user">
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-3">
+                                <select name="user_id" class="form-control selectpicker" multiple="multiple"
+                                        data-title="----选择用户----" data-live-search="true" data-size="8">
+                                    {% for user in all_users %}
+                                        <option value="{{ user.id }}">{{ user.chinese_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <select name="role_id" class="form-control selectpicker" data-title="----选择角色----"
+                                        data-live-search="true" data-size="8">
+                                    {% for role in roles %}
+                                        <option value="{{ role.id }}">{{ role.display_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-sm-1">
+                                <button type="submit" class="btn btn-primary">添加</button>
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
+                </div>
+                <div class="dorne-create-item">
+                    <a class="dorne-action" data-toggle="collapse" href="#collapse_add_role"><i
+                            class="glyphicon glyphicon-plus-sign"></i></a>
+                </div>
+            {% endif %}
+
+            <table
+                    data-classes="table table-hover"
+                    data-toggle="table"
+                    data-pagination="true"
+                    data-locale="zh-CN"
+                    data-search="true"
+                    data-search-align="left"
+                    id="project_user_role_table">
+                <thead>
+                <tr>
+                    <th width="25%" data-sortable="true">用户</th>
+                    <th width="75%">角色</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user, roles in users_with_roles %}
+                    <tr>
+                        <td><a href="{% url 'user:user_detail' user.id %}">{{ user.chinese_name }}</a></td>
+                        <td>
+                            {% for role in roles %}
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-default"
+                                            data-container="#panel_user_role"
+                                            data-trigger="hover"
+                                            data-toggle="popover"
+                                            data-placement="top"
+                                            data-content="{{ role.description }}">
+                                        {{ role.display_name }}
+                                    </button>
+                                    {% if pm.remove_project_role and role.resource_type == 'project' %}
+                                        <button type="button" class="btn btn-default remove_user_role"
+                                                data-user_id="{{ user.id }}" data-role_id="{{ role.id }}">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default" id="panel_team_role">
+        <div class="panel-heading">
+            <h1 class="panel-title">团队角色列表</h1>
+        </div>
+        <div class="panel-body table-responsive" style="overflow: visible;">
+            {% if pm.add_project_role %}
+                <div class="collapse" id="collapse_add_role_team">
+                    <form class="form-horizontal" action="{% url 'project:project_roles_add' project.id %}"
+                          method="post">
+                        <input type="hidden" name="target" value="team">
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-3">
+                                <select name="team_id" class="form-control selectpicker" multiple="multiple"
+                                        data-title="----选择团队----" data-live-search="true" data-size="8">
+                                    {% for team in all_teams %}
+                                        <option value="{{ team.id }}">{{ team.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <select name="role_id" class="form-control selectpicker" data-title="----选择角色----"
+                                        data-live-search="true" data-size="8">
+                                    {% for role in roles %}
+                                        <option value="{{ role.id }}">{{ role.display_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-sm-1">
+                                <button type="submit" class="btn btn-primary">添加</button>
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
+                </div>
+                <div class="dorne-create-item">
+                    <a class="dorne-action" data-toggle="collapse" href="#collapse_add_role_team">
+                        <i class="glyphicon glyphicon-plus-sign"></i>
+                    </a>
+                </div>
+            {% endif %}
+
+            <table
+                    data-classes="table table-hover"
+                    data-toggle="table"
+                    data-pagination="true"
+                    data-locale="zh-CN"
+                    data-search="true"
+                    data-search-align="left"
+                    id="project_team_role_table">
+                <thead>
+                <tr>
+                    <th width="25%" data-sortable="true">团队</th>
+                    <th width="75%">角色</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for team, roles in teams_with_roles %}
+                    <tr>
+                        {% if roles|length != 0 %}
+                            <td><a href="{% url 'organization:team_info_detail' team.id %}">{{ team.name }}</a></td>
+                            <td>
+                                {% for role in roles %}
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="button" class="btn btn-default"
+                                                data-trigger="hover"
+                                                data-container="#panel_team_role"
+                                                data-placement="top"
+                                                data-toggle="popover"
+                                                data-content="{{ role.description }}">
+                                            {{ role.display_name }}
+                                        </button>
+                                        {% if pm.remove_project_role and role.resource_type == 'project' %}
+                                            <button type="button" class="btn btn-default remove_team_role"
+                                                    data-role_id="{{ role.id }}" data-team_id="{{ team.id }}">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block foot_js %}
+    <script>
+        $(function () {
+            $('#pill_roles').addClass('active');
+            $('[data-toggle="popover"]').popover();
+            $('#project_user_role_table').on('search.bs.table', function (e, arg1, arg2) {
+                $('[data-toggle="popover"]').popover();
+            });
+            $('#project_team_role_table').on('search.bs.table', function (e, arg1, arg2) {
+                $('[data-toggle="popover"]').popover();
+            })
+        });
+    </script>
+    <script src="{% static 'js/project_roles.js' %}"></script>
+    {{ block.super }}
+{% endblock %}

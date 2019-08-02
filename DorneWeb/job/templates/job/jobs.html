@@ -1,0 +1,77 @@
+{% extends 'job/base.html' %}
+{% load static %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{{ request.get_all_path }}">任务</a></li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title">任务列表</h1>
+        </div>
+        <div class="panel-body table-responsive">
+            <table
+                    data-classes="table table-hover"
+                    data-toggle="table"
+                    data-pagination="true"
+                    data-locale="zh-CN"
+                    data-search="true"
+                    data-search-align="left"
+                    id="job_table">
+                <thead>
+                <tr>
+                    <th width="20%" data-sortable="true">名称</th>
+                    <th width="10%" data-sortable="true">状态</th>
+                    <th width="10%" data-sortable="true">开始时间</th>
+                    <th width="10%" data-sortable="true">结束时间</th>
+                    <th width="10" data-sortable="true">任务模板</th>
+                    <th width="10" data-sortable="true">仓库</th>
+                    <th width="10" data-sortable="true">项目</th>
+                    <th width="20%" data-sortable="true">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for job, pm in jobs_with_role %}
+                    <tr>
+                        <td><a href="{% url 'job:job_detail' job.id %}">{{ job.id }}-{{ job.name }}</a></td>
+                        <td style="white-space: pre-line;">{{ job.status_display }}</td>
+                        <td>{{ job.start_time }}</td>
+                        {% if job.status == 'running' or job.status == 'pending' %}
+                            <td>正在运行</td>
+                        {% else %}
+                            <td>{{ job.end_time }}</td>
+                        {% endif %}
+                        <td>
+                            <a href="{% url 'project:template_detail' job.job_template.id %}">{{ job.job_template.name }}</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'inventory:inventory_detail' job.job_template.inventory.id %}">{{ job.job_template.inventory.name }}</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'project:project_detail' job.job_template.project.id %}">{{ job.job_template.project.name }}</a>
+                        </td>
+                        <td>
+                            {% if pm.delete_job %}
+                                <a class="dorne-action delete_job" data-job_id="{{ job.id }}">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </a>
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!--form id="relaunch_job_form" action="" method="post" hidden="hidden"></form-->
+{% endblock %}
+
+{% block foot_js %}
+    <script src="{% static 'js/jobs.js' %}"></script>
+    {{ block.super }}
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'organization/base.html' %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{% url 'organization:organizations' %}">组织</a></li>
+        <li><a href="{% url 'organization:organization_detail' organization_id %}">{{ organization.name }}</a></li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <ul class="nav nav-pills">
+        <li id="organization_detail"><a href="{% url 'organization:organization_detail' organization_id %}">详细</a></li>
+        <li id="organization_user"><a href="{% url 'organization:organization_user' organization_id %}">用户</a></li>
+        <li id="organization_team"><a href="{% url 'organization:organization_team' organization_id %}">团队</a></li>
+        <li id="organization_project"><a href="{% url 'organization:organization_project' organization_id %}">项目</a></li>
+        <li id="organization_inventory"><a href="{% url 'organization:organization_inventory' organization_id %}">仓库</a></li>
+        <li id="organization_template"><a href="{% url 'organization:organization_template' organization_id %}">任务模板</a></li>
+    </ul>
+    <hr/>
+    {% block tab_content %}
+    {% endblock %}
+{% endblock %}
+

@@ -1,0 +1,843 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb dorne-breadcrumb">
+    <li><i class="glyphicon glyphicon-home" ></i></li>
+    <li><a href="{% url 'inventory:inventories' %}">仓库列表</a></li>
+    <li><a href="{{ request.get_all_path }}">{{ inventory.name }}</a></li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<ul class="nav nav-pills">
+    <li class="active"><a href="#tab_detail" data-toggle="pill">详情</a></li>
+    <li><a href="#tab_hosts" data-toggle="pill">主机</a></li>
+    <li><a href="#tab_groups" data-toggle="pill">组</a></li>
+    <li><a href="#tab_roles" data-toggle="pill">用户与团队</a></li>
+</ul>
+<br>
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane fade in active" id="tab_detail">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">仓库详情</h3>
+            </div>
+            <div class="panel-body">
+                <form id="inv_detail_form">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">名称 <span style="color: red;">*</span></label>
+                                {% if pm.update_inventory %}
+                                    <input type="text" name="name" class="form-control" maxlength="32" value="{{ inventory.name }}">
+                                {% else %}
+                                    <input type="text" class="form-control input_readonly" value="{{ inventory.name }}" readonly="readonly">
+                                {% endif %}
+                                <small
+                                    class="help-block error_text"
+                                    id="inv_name_err"></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">所属组织 <span style="color: red;">*</span></label>
+                                <p class="form-control-static"><a href="{% url  'organization:organization_detail' inventory.organization.id%}">{{ inventory.organization.name }}</a></p>
+                                <small
+                                    class="help-block error_text"
+                                    id="inv_organization_id_err"></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">描述</label>
+                                {% if pm.update_inventory %}
+                                    <textarea
+                                        name="description"
+                                        class="form-control"
+                                        rows="5"
+                                        style="resize: vertical">{{ inventory.description }}</textarea>
+                                {% else %}
+                                    <textarea
+                                        class="form-control input_readonly"
+                                        rows="5"
+                                        style="resize: vertical"
+                                        readonly="readonly">{{ inventory.description }}</textarea>
+                                {% endif %}
+                                <small
+                                    class="help-block error_text"
+                                    id="inv_description_err"></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">变量</label>
+                                {% if pm.update_inventory %}
+                                    <textarea
+                                        name="vars"
+                                        class="form-control textarea_json"
+                                        rows="5"
+                                        placeholder="请输入JSON格式的数据">{{ inventory.vars }}</textarea>
+                                    <button
+                                        type="button"
+                                        class="btn btn-default btn-sm"
+                                        id="inv_vars_format"
+                                        style="margin: 5px 0 0 0;">格式化</button>
+                                {% else %}
+                                    <textarea
+                                        class="form-control textarea_json input_readonly"
+                                        rows="5"
+                                        readonly="readonly">{{ inventory.vars }}</textarea>
+                                {% endif %}
+                                <small
+                                    class="help-block error_text"
+                                    id="inv_vars_err"></small>
+                            </div>
+                        </div>
+                    </div>
+                    {% if pm.update_inventory %}
+                        <div class="btn-group">
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                id="inv_detail_submit_btn"
+                                data-path="{% url 'inventory:api_inventory_edit' inventory.id %}">提交修改</button>
+                            <button type="reset" class="btn btn-default">还原</button>
+                        </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div role="tabpanel" class="tab-pane fade" id="tab_hosts">
+        <div class="panel panel-default" id="host_create_panel" style="display: none;">
+            <div class="panel-heading">
+                <h1 class="panel-title">
+                    新建主机
+                    <a class="panel_close_btn" id="host_create_panel_close_btn" title="关闭">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                </h1>
+            </div>
+            <div class="panel-body">
+                <form id="host_create_form">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>名称 <span style="color: red;">*</span></label>
+                                <input type="text" name="name" class="form-control" maxlength="64">
+                                <small
+                                    class="help-block error_text"
+                                    id="host_name_err"></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>IP <span style="color: red;">*</span></label>
+                                <input type="text" name="ip" class="form-control" maxlength="64">
+                                <small
+                                    class="help-block error_text"
+                                    id="host_ip_err"></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>描述</label>
+                                <textarea
+                                    name="description"
+                                    class="form-control"
+                                    rows="5"
+                                    style="resize: vertical"></textarea>
+                                <small
+                                    class="help-block error_text"
+                                    id="host_description_err"></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>变量</label>
+                                <textarea
+                                    name="vars"
+                                    class="form-control textarea_json"
+                                    rows="5"
+                                    style="resize: vertical"></textarea>
+                                <button
+                                    type="button"
+                                    class="btn btn-default btn-sm"
+                                    id="host_create_vars_format"
+                                    style="margin: 5px 0 0 0;">格式化</button>
+                                <small
+                                    class="help-block error_text"
+                                    id="host_vars_err"></small>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        id="host_create_submit_btn"
+                        data-path="{{ path_api_host_create }}"
+                        data-inventory_id="{{ inventory.id }}">提交</button>
+                </form>
+            </div>
+        </div>
+        <div class="panel panel-default" id="host_detail_panel" style="display: none;">
+            <div class="panel-heading">
+                <h1 class="panel-title">
+                    主机详情
+                    <a class="panel_close_btn" id="host_detail_panel_close_btn" title="关闭">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                </h1>
+            </div>
+            <div class="panel-body">
+                <form id="host_detail_form">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>名称 <span style="color: red;">*</span></label>
+                                {% if pm.update_host %}
+                                    <input type="text" name="name" class="form-control" maxlength="64">
+                                {% else %}
+                                    <input type="text" name="name" class="form-control input_readonly" maxlength="64"
+                                        readonly="readonly">
+                                {% endif %}
+                                <small
+                                    class="help-block error_text"
+                                    id="host_name_err"></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>IP <span style="color: red;">*</span></label>
+                                {% if pm.update_host %}
+                                    <input type="text" name="ip" class="form-control" maxlength="64">
+                                {% else %}
+                                    <input type="text" name="ip" class="form-control input_readonly" maxlength="64"
+                                        readonly="readonly">
+                                {% endif %}
+                                <small
+                                    class="help-block error_text"
+                                    id="host_ip_err"></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>描述</label>
+                                {% if pm.update_host %}
+                                    <textarea
+                                        name="description"
+                                        class="form-control"
+                                        rows="5"
+                                        style="resize: vertical"></textarea>
+                                {% else %}
+                                    <textarea
+                                        name="description"
+                                        class="form-control input_readonly"
+                                        rows="5"
+                                        style="resize: vertical"
+                                        readonly="readonly"></textarea>
+                                {% endif %}
+                                <small
+                                    class="help-block error_text"
+                                    id="host_description_err"></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>变量</label>
+                                {% if pm.update_host %}
+                                    <textarea
+                                        name="vars"
+                                        class="form-control textarea_json"
+                                        rows="5"
+                                        style="resize: vertical"></textarea>
+                                    <button
+                                        type="button"
+                                        class="btn btn-default btn-sm"
+                                        id="host_detail_vars_format"
+                                        style="margin: 5px 0 0 0;">格式化</button>
+                                {% else %}
+                                    <textarea
+                                        name="vars"
+                                        class="form-control textarea_json input_readonly"
+                                        rows="5"
+                                        style="resize: vertical"
+                                        readonly="readonly"></textarea>
+                                {% endif %}
+                                <small
+                                    class="help-block error_text"
+                                    id="host_vars_err"></small>
+                            </div>
+                        </div>
+                    </div>
+                    {% if pm.update_host %}
+                        <div class="btn-group">
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                id="host_detail_submit_btn">提交修改</button>
+                            <button type="reset" class="btn btn-default">还原</button>
+                        </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        <div class="panel panel-default" id="hosts_panel">
+            <div class="panel-heading">
+                <h1 class="panel-title">主机列表</h1>
+            </div>
+            <div class="panel-body table-responsive">
+                {% if pm.create_host %}
+                    <div class="dorne-create-item">
+                        <button
+                            type="button"
+                            class="btn btn-success"
+                            id="host_create_panel_toggle_btn">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                    </div>
+                {% endif %}
+                <table
+                    data-classes="table table-hover"
+                    data-toggle="table"
+                    data-pagination="true"
+                    data-locale="zh-CN"
+                    data-search="true"
+                    data-search-align="left"
+                    data-url="{{ path_api_inventory_hosts }}"
+                    data-method="get"
+                    data-cache="false"
+                    data-data-field="hosts"
+                    id="host_table">
+                    <thead>
+                        <tr>
+                            <th
+                                data-sortable="true"
+                                data-field="name"
+                                data-formatter="formatter_host_name"
+                                data-search-formatter="false">名称</th>
+                            <th
+                                data-sortable="true"
+                                data-field="ip">IP</th>
+                            <th
+                                data-field="description"
+                                data-class="description_in_table">描述</th>
+                            <th
+                                data-searchable="false"
+                                data-formatter="formatter_host_operation"
+                                data-search-formatter="false">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div role="tabpanel" class="tab-pane fade" id="tab_groups">
+        <div class="panel panel-default" id="group_create_panel" style="display: none;">
+            <div class="panel-heading">
+                <h1 class="panel-title">新建组</h1>
+            </div>
+            <div class="panel-body">
+                <form id="group_create_form">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>名称 <span style="color: red;">*</span></label>
+                                <input type="text" name="name" class="form-control" maxlength="64">
+                                <small
+                                    class="help-block error_text"
+                                    id="group_name_err"></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>描述</label>
+                                <textarea
+                                    name="description"
+                                    class="form-control"
+                                    rows="5"
+                                    style="resize: vertical"
+                                    maxlength="128"></textarea>
+                                <small
+                                    class="help-block error_text"
+                                    id="group_description_err"></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>变量</label>
+                                <textarea
+                                    name="vars"
+                                    class="form-control textarea_json"
+                                    rows="5"
+                                    placeholder="请输入JSON格式的数据"></textarea>
+                                <button
+                                    type="button"
+                                    class="btn btn-default btn-sm vars_format_btn"
+                                    id="group_create_vars_format">格式化</button>
+                                <small
+                                    class="help-block error_text"
+                                    id="group_vars_err"></small>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        id="group_create_submit_btn"
+                        data-path="{{ path_api_group_create }}"
+                        data-inventory_id="{{ inventory.id }}">提交</button>
+                </form>
+            </div>
+        </div>
+        <div class="panel panel-default" id="group_detail_panel" style="display: none;">
+            <div class="panel-heading">
+                <h1 class="panel-title">组详情</h1>
+            </div>
+            <div class="panel-body">
+                <form id="group_detail_form">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>名称 <span style="color: red;">*</span></label>
+                                {% if pm.update_group %}
+                                    <input type="text" name="name" class="form-control" maxlength="64">
+                                {% else %}
+                                    <input type="text" name="name" class="form-control input_readonly" maxlength="64"
+                                        readonly="readonly">
+                                {% endif %}
+                                <small
+                                    class="help-block error_text"
+                                    id="group_name_err"></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>描述</label>
+                                {% if pm.update_group %}
+                                    <textarea
+                                        name="description"
+                                        class="form-control"
+                                        rows="5"
+                                        style="resize: vertical"
+                                        maxlength="128"></textarea>
+                                {% else %}
+                                    <textarea
+                                        name="description"
+                                        class="form-control input_readonly"
+                                        rows="5"
+                                        style="resize: vertical"
+                                        maxlength="128"
+                                        readonly="readonly"></textarea>
+                                {% endif %}
+                                <small
+                                    class="help-block error_text"
+                                    id="group_description_err"></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>变量</label>
+                                {% if pm.update_group %}
+                                    <textarea
+                                        name="vars"
+                                        class="form-control textarea_json"
+                                        rows="5"
+                                        placeholder="请输入JSON格式的数据"></textarea>
+                                    <button
+                                        type="button"
+                                        class="btn btn-default btn-sm vars_format_btn"
+                                        id="group_create_vars_format">格式化</button>
+                                {% else %}
+                                    <textarea
+                                        name="vars"
+                                        class="form-control textarea_json input_readonly"
+                                        rows="5"
+                                        placeholder="请输入JSON格式的数据"
+                                        readonly="readonly"></textarea>
+                                {% endif %}
+                                <small
+                                    class="help-block error_text"
+                                    id="group_vars_err"></small>
+                            </div>
+                        </div>
+                    </div>
+                    {% if pm.update_group %}
+                        <div class="btn-group">
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                id="group_detail_submit_btn">提交修改</button>
+                            <button type="reset" class="btn btn-default">还原</button>
+                        </div>
+                    {% endif %}
+                </form>
+                <br>
+                <div class="panel panel-default" id="group_hosts_panel" style="display: none;">
+                    <div class="panel-heading">
+                        <h1 class="panel-title">包含的主机列表</h1>
+                    </div>
+                    <div class="panel-body table-responsive" style="overflow: visible;">
+                        {% if pm.add_host_into_group %}
+                            <div class="collapse" id="collapse_add_host">
+                                <form class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-sm-4 col-sm-offset-7">
+                                            <select name="host_id" class="form-control selectpicker" multiple="multiple" data-title="----选择主机----" data-live-search="true" data-size="8">
+                                                {% for h in hosts %}
+                                                    <option value="{{ h.id }}">{{ h.name }}({{ h.ip }})</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <button type="submit" class="btn btn-primary">加入</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <hr>
+                            </div>
+                            <div class="dorne-create-item">
+                                <a class="dorne-action" data-toggle="collapse" href="#collapse_add_host" title="添加"><i class="glyphicon glyphicon-plus-sign"></i></a>
+                            </div>
+                        {% endif %}
+                        <table
+                            data-classes="table table-hover"
+                            data-toggle="table"
+                            data-pagination="true"
+                            data-locale="zh-CN"
+                            data-search="true"
+                            data-search-align="left"
+                            id='group_hosts_table'>
+                            <thead>
+                                <tr>
+                                    <th data-sortable="true">名称</th>
+                                    <th data-sortable="true">IP</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for h in group.host_set.all %}
+                                <tr>
+                                    <td><a href="">{{ h.name }}</a></td>
+                                    <td>{{ h.ip }}</td>
+                                    <td style="white-space: pre-line;">{{ h.description }}</td>
+                                    <td>
+                                        {% if pm.remove_host_from_group %}
+                                            <a class="dorne-action remove_host" data-host_id="{{ h.id }}" title="移除">
+                                                <i class="glyphicon glyphicon-minus-sign"></i>
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="panel panel-default" id="group_groups_panel" style="display: none;">
+                    <div class="panel-heading">
+                        <h1 class="panel-title">包含的组列表</h1>
+                    </div>
+                    <div class="panel-body table-responsive" style="overflow: visible;">
+                        {% if pm.add_group_into_group %}
+                            <div class="collapse" id="collapse_add_group">
+                                <form class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-sm-4 col-sm-offset-7">
+                                            <select name="cgid" class="form-control selectpicker" multiple="multiple" data-title="----选择组----" data-live-search="true" data-size="8">
+                                                {% for g in groups %}
+                                                    <option value="{{ g.id }}">{{ g.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <button type="submit" class="btn btn-primary">加入</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <hr>
+                            </div>
+                            <div class="dorne-create-item">
+                                <a class="dorne-action" data-toggle="collapse" href="#collapse_add_group" title="添加"><i class="glyphicon glyphicon-plus-sign"></i></a>
+                            </div>
+                        {% endif %}
+                        <table
+                            data-classes="table table-hover"
+                            data-toggle="table"
+                            data-pagination="true"
+                            data-locale="zh-CN"
+                            data-search="true"
+                            data-search-align="left"
+                            id='group_groups_table'>
+                            <thead>
+                                <tr>
+                                    <th data-sortable="true">名称</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for g in group.group_set.all %}
+                                <tr>
+                                    <td><a href="">{{ g.name }}</a></td>
+                                    <td style="white-space: pre-line;">{{ g.description }}</td>
+                                    <td>
+                                        {% if pm.remove_group_from_group %}
+                                            <a class="dorne-action remove_group" data-group_id="{{ g.id }}" title="移除">
+                                                <i class="glyphicon glyphicon-minus-sign"></i>
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default" id="groups_panel">
+            <div class="panel-heading">
+                <h1 class="panel-title">组列表</h1>
+            </div>
+            <div class="panel-body table-responsive">
+                {% if pm.create_group %}
+                    <div class="dorne-create-item">
+                        <button
+                            type="button"
+                            class="btn btn-success"
+                            id="group_create_panel_toggle_btn">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                    </div>
+                {% endif %}
+                <table
+                    data-classes="table table-hover"
+                    data-toggle="table"
+                    data-pagination="true"
+                    data-locale="zh-CN"
+                    data-search="true"
+                    data-search-align="left"
+                    data-url="{{ path_api_inventory_groups }}"
+                    data-method="get"
+                    data-cache="false"
+                    data-data-field="groups"
+                    id="group_table">
+                    <thead>
+                        <tr>
+                            <th
+                                data-sortable="true"
+                                data-field="name"
+                                data-formatter="formatter_group_name"
+                                data-search-formatter="false">名称</th>
+                            <th
+                                data-field="description"
+                                data-class="description_in_table">描述</th>
+                            <th
+                                data-searchable="false"
+                                data-formatter="formatter_group_operation"
+                                data-search-formatter="false">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for g in groups %}
+                        <tr>
+                            <td><a href="">{{ g.name }}</a></td>
+                            <td style="white-space: pre-line;">{{ g.description }}</td>
+                            <td>
+                                {% if pm.delete_group %}
+                                    <a class="dorne-action delete_group" data-delete_href="" title="删除">
+                                        <i class="glyphicon glyphicon-trash"></i>
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div role="tabpanel" class="tab-pane fade" id="tab_roles">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="panel panel-default" id="panel_user_role">
+                    <div class="panel-heading">
+                        <h1 class="panel-title">用户列表</h1>
+                    </div>
+                    <div class="panel-body table-responsive" style="overflow: visible;">
+                        {% if pm.add_inventory_role %}
+                            <div class="collapse" id="collapse_add_role">
+                                <form class="form-horizontal">
+                                    <input type="hidden" name="target" value="user">
+                                    <div class="form-group">
+                                        <div class="col-sm-4 col-sm-offset-3">
+                                            <select name="user_id" class="form-control selectpicker" multiple="multiple" data-title="----选择用户----" data-live-search="true" data-size="8">
+                                                {% for user in all_users %}
+                                                    <option value="{{ user.id }}">{{ user.chinese_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <select name="role_id" class="form-control selectpicker" data-title="----选择角色----" data-live-search="true" data-size="8">
+                                                {% for role in roles %}
+                                                    <option value="{{ role.id }}">{{ role.display_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-1 text-right">
+                                            <button type="submit" class="btn btn-primary">添加</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <hr>
+                            </div>
+                            <div class="dorne-create-item">
+                                <a class="dorne-action" data-toggle="collapse" href="#collapse_add_role"><i class="glyphicon glyphicon-plus-sign"></i></a>
+                            </div>
+                        {% endif %}
+                        <table
+                            data-classes="table table-hover"
+                            data-toggle="table"
+                            data-pagination="true"
+                            data-locale="zh-CN"
+                            data-search="true"
+                            data-search-align="left"
+                            id='user_table'>
+                            <thead>
+                                <tr>
+                                    <th width="25%" data-sortable="true">用户</th>
+                                    <th width="75%">角色</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for user, roles in users_with_roles %}
+                                <tr>
+                                    <td><a href="#">{{ user.chinese_name }}</a></td>
+                                    <td>
+                                        {% for role in roles %}
+                                            <div class="btn-group btn-group-sm">
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-default"
+                                                    data-container="#panel_user_role"
+                                                    data-trigger="hover"
+                                                    data-toggle="popover"
+                                                    data-placement="top"
+                                                    data-content="{{ role.description }}">{{ role.display_name }}</button>
+                                                {% if pm.remove_inventory_role and role.resource_type == 'inventory' %}
+                                                <button type="button" class="btn btn-default remove_user_role" data-user_id="{{ user.id }}" data-role_id="{{ role.id }}"><span class="glyphicon glyphicon-remove"></span></button>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="panel panel-default" id="panel_team_role">
+                    <div class="panel-heading">
+                        <h1 class="panel-title">团队列表</h1>
+                    </div>
+                    <div class="panel-body table-responsive" style="overflow: visible;">
+                        {% if pm.add_inventory_role %}
+                            <div class="collapse" id="collapse_add_role_team">
+                                <form class="form-horizontal">
+                                    <input type="hidden" name="target" value="team">
+                                    <div class="form-group">
+                                        <div class="col-sm-4 col-sm-offset-3">
+                                            <select name="team_id" class="form-control selectpicker" multiple="multiple" data-title="----选择团队----" data-live-search="true" data-size="8">
+                                                {% for team in all_teams %}
+                                                    <option value="{{ team.id }}">{{ team.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <select name="role_id" class="form-control selectpicker" data-title="----选择角色----" data-live-search="true" data-size="8">
+                                                {% for role in roles %}
+                                                    <option value="{{ role.id }}">{{ role.display_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-1 text-right">
+                                            <button type="submit" class="btn btn-primary">添加</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <hr>
+                            </div>
+                            <div class="dorne-create-item">
+                                <a class="dorne-action" data-toggle="collapse" href="#collapse_add_role_team"><i class="glyphicon glyphicon-plus-sign"></i></a>
+                            </div>
+                        {% endif %}
+                        <table
+                            data-classes="table table-hover"
+                            data-toggle="table"
+                            data-pagination="true"
+                            data-locale="zh-CN"
+                            data-search="true"
+                            data-search-align="left"
+                            id='team_table'>
+                            <thead>
+                                <tr>
+                                    <th width="25%" data-sortable="true">团队</th>
+                                    <th width="75%">角色</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for team, roles in teams_with_roles %}
+                                <tr>
+                                    <td><a href="#">{{ team.name }}</a></td>
+                                    <td>
+                                        {% for role in roles %}
+                                            <div class="btn-group btn-group-sm">
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-default"
+                                                    data-container="#panel_team_role"
+                                                    data-trigger="hover"
+                                                    data-toggle="popover"
+                                                    data-placement="top"
+                                                    data-content="{{ role.description }}">{{ role.display_name }}</button>
+                                                {% if pm.remove_inventory_role and role.resource_type == 'inventory' %}
+                                                    <button type="button" class="btn btn-default remove_team_role" data-team_id="{{ team.id }}" data-role_id="{{ role.id }}"><span class="glyphicon glyphicon-remove"></span></button>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block foot_js %}
+{{ block.super }}
+<script src="{% static 'inventory/js/inventory_validator.js' %}"></script>
+<script src="{% static 'inventory/js/inventory_detail.js' %}"></script>
+{% endblock %}

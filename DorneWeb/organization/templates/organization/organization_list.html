@@ -1,0 +1,58 @@
+{% extends 'organization/base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">组织列表</h1></div>
+        <div class="panel-body table-responsive">
+            {% if pm_create_org %}
+                <div class="dorne-create-item">
+                    <a href="{% url 'organization:organizations_create' %}" class="btn btn-success"><i class="glyphicon glyphicon-plus"></i></a>
+                </div>
+            {% endif %}
+
+            <table id="organization_list_table"
+            data-classes="table table-hover"
+                data-toggle="table"
+                data-pagination="true"
+                data-locale="zh-CN"
+                data-search="true"
+                data-search-align="left">
+                <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>描述</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for organization in organizations %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'organization:organization_detail' organization.id %}">{{ organization.name }}</a>
+                        </td>
+                        <td>{{ organization.description }}</td>
+                        <td>
+                            <a class="dorne-action" title="编辑"
+                               href="{% url 'organization:organization_detail' organization.id %}">
+                                <i class="glyphicon glyphicon-pencil"></i>
+                            </a>
+                            {% if pm_delete_org %}
+                                <a class="dorne-action delete_org" data-org_id="{{ organization.id }}" title="删除">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block foot_js %}
+    <script src="{% static 'js/organization_list.js' %}"></script>
+    {{ block.super }}
+{% endblock %}

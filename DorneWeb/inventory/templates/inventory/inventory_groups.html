@@ -1,0 +1,132 @@
+{% extends 'inventory/inventory_base.html' %}
+{% load static %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb dorne-breadcrumb">
+    <li><i class="glyphicon glyphicon-home" ></i></li>
+    <li><a href="{% url 'inventory:inventories' %}">仓库列表</a></li>
+    <li><a href="{% url 'inventory:inventory_detail' inventory.id %}">{{ inventory.name }}</a></li>
+    <li><a href="{{ request.get_all_path }}">组列表</a></li>
+</ol>
+{% endblock %}
+
+{% block inner_content %}
+<div class="panel panel-default" id="group_create_panel" style="display: none;">
+    <div class="panel-heading">
+        <h1 class="panel-title">
+            新建组
+            <a class="panel_close_btn" id="group_create_panel_close_btn" title="关闭">
+                <span class="glyphicon glyphicon-remove"></span>
+            </a>
+        </h1>
+    </div>
+    <div class="panel-body">
+        <form id="group_create_form">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>名称 <span style="color: red;">*</span></label>
+                        <input type="text" name="name" class="form-control" maxlength="64">
+                        <small
+                            class="help-block error_text"
+                            id="group_name_err"></small>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>描述</label>
+                        <textarea
+                            name="description"
+                            class="form-control"
+                            rows="5"
+                            style="resize: vertical"
+                            maxlength="128"></textarea>
+                        <small
+                            class="help-block error_text"
+                            id="group_description_err"></small>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>变量</label>
+                        <textarea
+                            name="vars"
+                            class="form-control textarea_json"
+                            rows="5"
+                            placeholder="请输入JSON格式的数据"></textarea>
+                        <button
+                            type="button"
+                            class="btn btn-default btn-sm vars_format_btn"
+                            id="group_create_vars_format">格式化</button>
+                        <small
+                            class="help-block error_text"
+                            id="group_vars_err"></small>
+                    </div>
+                </div>
+            </div>
+            <button
+                type="button"
+                class="btn btn-primary"
+                id="group_create_submit_btn"
+                data-path="{{ path_api_group_create }}"
+                data-inventory_id="{{ inventory.id }}">提交</button>
+        </form>
+    </div>
+</div>
+<div class="panel panel-default" id="groups_panel">
+    <div class="panel-heading">
+        <h1 class="panel-title">组列表</h1>
+    </div>
+    <div class="panel-body table-responsive">
+        {% if pm.create_group %}
+            <div class="dorne-create-item">
+                <button
+                    type="button"
+                    class="btn btn-success"
+                    id="group_create_panel_toggle_btn">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </button>
+            </div>
+        {% endif %}
+        <table
+            data-classes="table table-hover"
+            data-toggle="table"
+            data-pagination="true"
+            data-locale="zh-CN"
+            data-search="true"
+            data-search-align="left"
+            data-url="{{ path_api_inventory_groups }}"
+            data-method="get"
+            data-cache="false"
+            data-data-field="groups"
+            id="group_table">
+            <thead>
+                <tr>
+                    <th
+                        data-sortable="true"
+                        data-field="name"
+                        data-formatter="formatter_group_name"
+                        data-search-formatter="false">名称</th>
+                    <th
+                        data-field="description"
+                        data-class="description_in_table">描述</th>
+                    <th
+                        data-searchable="false"
+                        data-formatter="formatter_group_operation"
+                        data-search-formatter="false">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block foot_js %}
+{{ block.super }}
+<script src="{% static 'inventory/js/inventory_validator.js' %}"></script>
+<script src="{% static 'inventory/js/inventory_groups.js' %}"></script>
+{% endblock %}

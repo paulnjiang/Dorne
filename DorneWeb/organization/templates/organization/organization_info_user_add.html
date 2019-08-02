@@ -1,0 +1,84 @@
+{% extends 'organization/organization_info.html' %}
+{% load static %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{% url 'organization:organizations' %}">组织</a></li>
+        <li><a href="{% url 'organization:organization_detail' organization_id %}">{{ organization.name }}</a></li>
+        <li><a href="{% url 'organization:organization_user' organization_id %}">用户</a></li>
+        <li><a href="{% url 'organization:organization_user_add' organization_id %}">添加</a></li>
+    </ol>
+{% endblock %}
+
+{% block tab_content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title">添加用户</h1>
+        </div>
+        <div class="panel-body table-responsive">
+            <table data-classes="table table-hover"
+                data-toggle="table"
+                data-pagination="true"
+                data-locale="zh-CN"
+                data-search="true"
+                data-search-align="left">
+                <thead>
+                <tr>
+                    <th width="20%">选择</th>
+                    <th width="80%">用户名</th>
+                </tr>
+                </thead>
+                <tbody id="add_user_to_org_tbody">
+                {% for user in org_users %}
+                    <tr>
+                        <td><input type="checkbox" data-user_id="{{ user.id }}"></td>
+                        <td>{{ user.chinese_name }}</td>
+                    </tr>
+                {% endfor %}
+                {% for user in users_not_has_org %}
+                    <tr>
+                        <td><input type="checkbox" data-user_id="{{ user.id }}"></td>
+                        <td>{{ user.chinese_name }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <hr/>
+            <div class="row dorne-label">
+                <label for="organization_role_select" style="color:red">*</label> 角色
+            </div>
+            <div class="row dorne-selectpicker">
+                <select id="organization_role_select" data-org_id="{{ organization_id }}" class="selectpicker">
+                </select>
+            </div>
+            <hr/>
+            <button class="btn btn-success add_user_to_org_btn">添加</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block foot_js %}
+    <script>
+        let org_id = $('#organization_role_select').data('org_id');
+        let url = '/organization/ajax/organization/' + org_id + '/role/';
+        $.get(url, function (data) {
+            let organization_role_select = $('#organization_role_select');
+            if (data.status) {
+                for (role in data.org_roles) {
+                    let option = $('<option></option>');
+                    option.attr('value', data.org_roles[role].id);
+                    option.text(data.org_roles[role].display_name);
+                    organization_role_select.append(option);
+                }
+            } else {
+                Swal('出错', data.errmsg, 'error');
+            }
+        });
+        $(function () {
+            $("#organization_user").addClass("active");
+        });
+    </script>
+    <script src="{% static 'js/organization_info_user_add.js' %}"></script>
+    {{ block.super }}
+{% endblock %}

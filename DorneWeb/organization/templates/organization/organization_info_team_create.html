@@ -1,0 +1,60 @@
+{% extends 'organization/base.html' %}
+{% load static %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{% url 'organization:organizations' %}">组织</a></li>
+        <li><a href="{% url 'organization:organization_detail' organization_id %}">{{ organization.name }}</a></li>
+        <li><a href="{% url 'organization:organization_team' organization_id %}">团队</a></li>
+        <li><a href="{% url 'organization:organization_team_create' organization_id %}">创建</a></li>
+    </ol>
+{% endblock %}
+
+
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">创建团队</h1></div>
+        <div class="panel-body table-responsive">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-10 col-sm-10 col-xs-12">
+                        <label style="color:red">*</label><label>名字</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        {{ team_info_form.name }}
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-10 col-sm-10 col-xs-12">
+                        <label style="color:red">*</label><label>组织</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        {{ team_info_form.organization }}
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-md-10 col-sm-10 col-xs-12">
+                        <label>描述</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-5 col-xs-12">
+                        {{ team_info_form.description }}
+                    </div>
+                </div>
+                <br/>
+                <a href="{% url 'organization:organization_team' organization_id %}" class="btn btn-default">取消</a>
+                <button type="submit" class="btn btn-primary">创建</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+

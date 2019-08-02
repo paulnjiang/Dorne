@@ -1,0 +1,81 @@
+{% extends 'project/base.html' %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{% url 'project:projects' %}">项目</a></li>
+        <li><a href="{{ request.get_all_path }}">新建</a></li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title">新建项目</h1>
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal" action="{% url 'project:project_create' %}" method="post">
+                <div class="form-group">
+                    <label class="col-sm-4"><span style="color: red;">*</span> 名称</label>
+                    <label class="col-sm-4"><span style="color: red;">*</span> 组织</label>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        {{ form.name }}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form.organization_id }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-4">描述</label>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        {{ form.description }}
+                    </div>
+                </div>
+                <hr/>
+                <div class="form-group">
+                    <label class="col-sm-4">SCM类型</label>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        {{ form.scm_type }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4"><span style="color: red;">*</span> URL</label>
+                    <label class="col-sm-2"><span style="color: red;">*</span> 用户名</label>
+                    <label class="col-sm-3">分支</label>
+                    <label class="hidden col-sm-3">Revision</label>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        {{ form.url }}
+                    </div>
+                    <div class="col-sm-2">
+                        {{ form.username }}
+                    </div>
+                    <div class="col-sm-3">
+                        {{ form.branch }}
+                    </div>
+                    <div class="col-sm-3 hidden">
+                        {{ form.revision }}
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">提交</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block foot_js %}
+    <script type="text/javascript">
+        $(function () {
+            $('.selectpicker').selectpicker();
+        });
+    </script>
+    {{ block.super }}
+{% endblock %}

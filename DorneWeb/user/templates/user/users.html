@@ -1,0 +1,31 @@
+{% extends 'user/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">用户列表</h1></div>
+        <div class="panel-body table-responsive">
+            <table data-classes="table table-hover"
+                   data-toggle="table"
+                   data-pagination="true"
+                   data-locale="zh-CN"
+                   data-search="true"
+                   data-search-align="left">
+                <thead>
+                <tr>
+                    <th data-sortable="true">中文名</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td><a href="{% url 'user:user_detail' user.id %}">{{ user.chinese_name }}</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+{% endblock %}
+

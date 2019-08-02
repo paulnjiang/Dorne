@@ -1,0 +1,59 @@
+{% extends 'organization/organization_info.html' %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb dorne-breadcrumb">
+        <li><i class="glyphicon glyphicon-home"></i></li>
+        <li><a href="{% url 'organization:organizations' %}">组织</a></li>
+        <li><a href="{% url 'organization:organization_detail' organization_id %}">{{ organization.name }}</a></li>
+        <li><a href="{% url 'organization:organization_inventory' organization_id %}">仓库</a></li>
+    </ol>
+{% endblock %}
+
+{% block tab_content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-title">仓库列表</h1>
+        </div>
+        <div class="panel-body table-responsive">
+            <table data-classes="table table-hover"
+                data-toggle="table"
+                data-pagination="true"
+                data-locale="zh-CN"
+                data-search="true"
+                data-search-align="left">
+                <thead>
+                <tr>
+                    <th>名字</th>
+                    <th>组织</th>
+                    <th class="dorne-action-th">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for inventory in inventories %}
+                    <tr>
+                        <td><a href="">{{ inventory.name }}</a></td>
+                        <td>{{ inventory.organization.name }}</td>
+                        <td>
+                            <a class="dorne-action"
+                               href="#">
+                                <i class="glyphicon glyphicon-pencil"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block foot_js %}
+    <script>
+        $(function () {
+            $("#organization_inventory").addClass("active");
+        });
+    </script>
+    {{ block.super }}
+{% endblock %}
+

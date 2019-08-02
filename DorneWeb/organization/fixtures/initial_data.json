@@ -1,0 +1,10 @@
+[
+  {
+    "model": "organization.organization",
+    "pk": 1,
+    "fields": {
+      "name": "SRE Organization",
+      "description": "SRE部门"
+    }
+  }
+]

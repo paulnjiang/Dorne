@@ -1,0 +1,125 @@
+{% extends 'inventory/inventory_base.html' %}
+{% load static %}
+
+{% block breadcrumb %}
+<ol class="breadcrumb dorne-breadcrumb">
+    <li><i class="glyphicon glyphicon-home" ></i></li>
+    <li><a href="{% url 'inventory:inventories' %}">仓库列表</a></li>
+    <li><a href="{% url 'inventory:inventory_detail' inventory.id %}">{{ inventory.name }}</a></li>
+    <li><a href="{% url 'inventory:inventory_hosts' inventory.id %}">主机列表</a></li>
+    <li><a href="{{ request.get_all_path }}">{{ host.name }}</a></li>
+</ol>
+{% endblock %}
+
+{% block inner_content %}
+<div class="panel panel-default" id="host_detail_panel">
+    <div class="panel-heading">
+        <h1 class="panel-title">
+            主机详情
+        </h1>
+    </div>
+    <div class="panel-body">
+        <form id="host_detail_form">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>名称 <span style="color: red;">*</span></label>
+                        {% if pm.update_host %}
+                            <input type="text" name="name" class="form-control" maxlength="64" value="{{ host.name }}">
+                        {% else %}
+                            <input type="text" name="name" class="form-control input_readonly" maxlength="64"
+                                readonly="readonly"
+                                value="{{ host.name }}">
+                        {% endif %}
+                        <small
+                            class="help-block error_text"
+                            id="host_name_err"></small>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>IP <span style="color: red;">*</span></label>
+                        {% if pm.update_host %}
+                            <input type="text" name="ip" class="form-control" maxlength="64" value="{{ host.ip }}">
+                        {% else %}
+                            <input type="text" name="ip" class="form-control input_readonly" maxlength="64"
+                                readonly="readonly"
+                                value="{{ host.ip }}">
+                        {% endif %}
+                        <small
+                            class="help-block error_text"
+                            id="host_ip_err"></small>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>描述</label>
+                        {% if pm.update_host %}
+                            <textarea
+                                name="description"
+                                class="form-control"
+                                rows="5"
+                                style="resize: vertical">{{ host.description }}</textarea>
+                        {% else %}
+                            <textarea
+                                name="description"
+                                class="form-control input_readonly"
+                                rows="5"
+                                style="resize: vertical"
+                                readonly="readonly">{{ host.description }}</textarea>
+                        {% endif %}
+                        <small
+                            class="help-block error_text"
+                            id="host_description_err"></small>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>变量</label>
+                        {% if pm.update_host %}
+                            <textarea
+                                name="vars"
+                                class="form-control textarea_json"
+                                rows="5"
+                                style="resize: vertical">{{ host.vars }}</textarea>
+                            <button
+                                type="button"
+                                class="btn btn-default btn-sm"
+                                id="host_detail_vars_format"
+                                style="margin: 5px 0 0 0;">格式化</button>
+                        {% else %}
+                            <textarea
+                                name="vars"
+                                class="form-control textarea_json input_readonly"
+                                rows="5"
+                                style="resize: vertical"
+                                readonly="readonly">{{ host.vars }}</textarea>
+                        {% endif %}
+                        <small
+                            class="help-block error_text"
+                            id="host_vars_err"></small>
+                    </div>
+                </div>
+            </div>
+            {% if pm.update_host %}
+                <div class="btn-group">
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        id="host_detail_submit_btn"
+                        data-path="{{ path_api_edit }}">提交修改</button>
+                    <!-- <button type="reset" class="btn btn-default">还原</button> -->
+                </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block foot_js %}
+{{ block.super }}
+<script src="{% static 'inventory/js/inventory_validator.js' %}"></script>
+<script src="{% static 'inventory/js/inventory_host_detail.js' %}"></script>
+{% endblock %}
