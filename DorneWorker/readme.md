@@ -57,7 +57,7 @@ forks = 10
     "extra_variables": {
       "gituser": "zhangsan",
       "gitpassword": "1qqa2ssd",
-      "giturl": "code.mzsvn.com/Sothoryos/monitor_playbook",
+      "giturl": "your repos",
       "gitbranch": "master"     
     }
   }
