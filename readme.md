@@ -1,3 +1,3 @@
 # Dorne
 
-management your hosts
+control your hosts
