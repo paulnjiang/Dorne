@@ -1,6 +1,6 @@
 certifi==2018.11.29
 chardet==3.0.4
-Django==2.1.5
+Django==2.2.24
 docutils==0.14
 extras==1.0.0
 gear==0.12.0
